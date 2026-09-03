@@ -4,9 +4,12 @@
 
 | 项目 | 仓库 | 固定版本 | Commit | License |
 |------|------|----------|--------|---------|
-| Ghost（核心/运行时） | https://github.com/TryGhost/Ghost | `v6.62.0` | `d4fbd04045` | MIT |
+| Ghost（源码参考） | https://github.com/TryGhost/Ghost | `v6.62.0`（`main`，`d4fbd04045`） | 用于阅读 | MIT |
+| Ghost（运行基线） | `ghost install local`（npm） | `v6.59.0` | — | MIT |
 | Casper（主题基底） | https://github.com/TryGhost/Casper | `v5.12.3` | 见子模块 | MIT |
 | RealWorld（业务规范参考） | https://github.com/realworld-apps/realworld | 仅作规范阅读 | — | 逐项核对 |
+
+> 说明：`Desktop/Ghost` 为源码仓库（`v6.62.0`，用于定向阅读核心代码）；实际运行的博客由 Ghost CLI 在 `runtime/` 安装 npm 最新版 `v6.59.0`。二者分别记录，避免混淆。
 
 ## 环境版本
 
