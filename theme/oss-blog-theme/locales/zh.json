@@ -56,6 +56,7 @@
     "Next issue": "",
     "Next post": "",
     "Next →": "",
+    "No related posts yet": "暂无相关推荐",
     "Older Posts": "",
     "Page {page} of {totalPages}": "",
     "Paid": "",
@@ -74,6 +75,7 @@
     "Read next": "",
     "Recent posts": "",
     "Recommendations": "推荐",
+    "Related Posts": "相关推荐",
     "Search posts, tags and authors": "搜索文章、标签和作者",
     "Search this site": "搜索本站内容",
     "See all": "查看全部",
@@ -117,7 +119,5 @@
     "comments": "",
     "in {primaryTag}": "",
     "jamie@example.com": "张伟@示例.com",
-    "← Previous": "",
-    "Related Posts": "相关推荐",
-    "No related posts yet": "暂无相关推荐"
+    "← Previous": ""
 }
