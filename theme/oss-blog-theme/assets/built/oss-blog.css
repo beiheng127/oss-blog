@@ -1,0 +1,150 @@
+/* ==========================================================================
+   OSS Blog — custom styles (Experiment 01: Ghost secondary development)
+   Forked from Casper. Adds:
+   - reading progress bar
+   - reading-time badge on post cards
+   - author name in card meta
+   - clickable tag chips on post detail
+   - related-posts panel (matched by tag, shows reading time)
+   ========================================================================== */
+
+/* --- Reading progress bar -------------------------------------------------- */
+.oss-reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.oss-reading-progress-bar {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--ghost-accent-color);
+    border-radius: 0 2px 2px 0;
+    transition: width 0.12s linear;
+}
+
+/* --- Post card refinements ------------------------------------------------- */
+.post-card-meta {
+    gap: 8px;
+}
+
+.post-card-meta-author {
+    color: var(--color-secondary-text);
+    font-weight: 600;
+}
+
+.oss-reading-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--ghost-accent-color);
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.oss-reading-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ghost-accent-color);
+}
+
+/* --- Post detail: tag chips ------------------------------------------------ */
+.oss-post-meta {
+    margin-top: 20px;
+}
+
+.oss-post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.oss-post-tag {
+    display: inline-block;
+    padding: 5px 13px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-secondary-text);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.oss-post-tag:hover {
+    border-color: var(--ghost-accent-color);
+    color: var(--ghost-accent-color);
+}
+
+/* --- Related posts panel --------------------------------------------------- */
+.oss-related-wrap {
+    padding: 48px 0;
+}
+
+.oss-related {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.oss-related-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.oss-related-title {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: -0.01em;
+}
+
+.oss-related-tag {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--color-wash);
+    color: var(--ghost-accent-color);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.oss-related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+}
+
+.oss-related-empty {
+    margin: 0;
+    padding: 28px;
+    border: 1px dashed var(--color-border);
+    border-radius: 12px;
+    color: var(--color-secondary-text);
+    text-align: center;
+}
+
+/* --- Footer theme credit --------------------------------------------------- */
+.oss-theme-credit {
+    color: var(--color-secondary-text);
+    opacity: 0.7;
+}
+
+/* --- Responsive ------------------------------------------------------------ */
+@media (max-width: 900px) {
+    .oss-related-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
