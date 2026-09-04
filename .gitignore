@@ -34,6 +34,9 @@ Thumbs.db
 .vscode/
 *.swp
 
+# ---- Local ssh deploy keys (never commit; rotate + re-add to GitHub on new machines) ----
+.ssh/
+
 # ---- Data export (contains member PII — do not commit raw exports) ----
 exports/
 *.ghost.json
