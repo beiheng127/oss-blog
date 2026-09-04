@@ -1,0 +1,91 @@
+/* ==========================================================================
+   OSS Blog — enhancement styles (pairs with oss-enhance.js)
+   - copy button on code blocks
+   - back-to-top button
+   ========================================================================== */
+
+/* --- Copy button on code blocks -------------------------------------------- */
+.gh-content pre {
+    position: relative;
+}
+
+.oss-copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--color-border, #e3e3e3);
+    border-radius: 8px;
+    background: var(--color-background, #fff);
+    color: var(--color-secondary-text, #808080);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.gh-content pre:hover .oss-copy-btn,
+.oss-copy-btn:focus-visible,
+.oss-copy-btn.is-copied {
+    opacity: 1;
+}
+
+.oss-copy-btn:hover {
+    color: var(--ghost-accent-color, #30cf43);
+    border-color: var(--ghost-accent-color, #30cf43);
+}
+
+.oss-copy-btn.is-copied {
+    color: #2da44e;
+    border-color: #2da44e;
+}
+
+/* --- Back-to-top button ----------------------------------------------------- */
+#oss-back-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--color-border, #e3e3e3);
+    border-radius: 50%;
+    background: var(--color-background, #fff);
+    color: var(--color-secondary-text, #808080);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease,
+        color 0.2s ease, border-color 0.2s ease;
+}
+
+#oss-back-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+#oss-back-top:hover {
+    color: var(--ghost-accent-color, #30cf43);
+    border-color: var(--ghost-accent-color, #30cf43);
+}
+
+/* --- Responsive -------------------------------------------------------------- */
+@media (max-width: 600px) {
+    #oss-back-top {
+        right: 16px;
+        bottom: 16px;
+        width: 40px;
+        height: 40px;
+    }
+}

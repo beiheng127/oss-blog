@@ -4,93 +4,112 @@
 <main id="site-main" class="site-main outer">
 <div class="inner posts">
 
-    <div class="post-feed">
-
+    <section class="oss-author">
         {{#author}}
-        <section class="post-card post-card-large">
-
-            {{#if cover_image}}
-            <div class="post-card-image-link">
-                {{!-- This is a responsive image, it loads different sizes depending on device
-                https://medium.freecodecamp.org/a-guide-to-responsive-images-with-ready-to-use-templates-c400bd65c433 --}}
-                <img class="post-card-image"
-                    srcset="{{img_url cover_image size="s"}} 300w,
-                            {{img_url cover_image size="m"}} 600w,
-                            {{img_url cover_image size="l"}} 1000w,
-                            {{img_url cover_image size="xl"}} 2000w"
-                    sizes="(max-width: 1000px) 400px, 800px"
-                    src="{{img_url cover_image size="m"}}"
-                    alt="{{title}}"
-                    fetchpriority="high"
-                    loading="eager"
-                />
-            </div>
-            {{/if}}
-
-            <div class="post-card-content">
-            <div class="post-card-content-link">
-
-                {{#if profile_image}}
-                    <img class="author-profile-pic" src="{{profile_image}}" alt="{{name}}" loading="eager" />
-                {{/if}}
-
-                <header class="post-card-header">
-                    <h2 class="post-card-title">{{name}}</h2>
-                </header>
-
-                {{#if bio}}
-                    <div class="post-card-excerpt">{{bio}}</div>
-                {{/if}}
-
-                <footer class="author-profile-footer">
-                    {{#if location}}
-                        <div class="author-profile-location">{{location}}</div>
-                    {{/if}}
-                    <div class="author-profile-meta">
-                        {{#if website}}
-                            <a class="author-profile-social-link" href="{{website}}" target="_blank" rel="noopener">{{website}}</a>
-                        {{/if}}
-                        {{#if twitter}}
-                            <a class="author-profile-social-link" href="{{social_url type="twitter"}}" target="_blank" rel="noopener">{{> "icons/x"}}</a>
-                        {{/if}}
-                        {{#if facebook}}
-                            <a class="author-profile-social-link" href="{{social_url type="facebook"}}" target="_blank" rel="noopener">{{> "icons/facebook"}}</a>
-                        {{/if}}
-                        {{#if linkedin}}
-                            <a class="author-profile-social-link" href="{{social_url type="linkedin"}}" target="_blank" rel="noopener">{{> "icons/linkedin"}}</a>
-                        {{/if}}
-                        {{#if bluesky}}
-                            <a class="author-profile-social-link" href="{{social_url type="bluesky"}}" target="_blank" rel="noopener">{{> "icons/bluesky"}}</a>
-                        {{/if}}
-                        {{#if threads}}
-                            <a class="author-profile-social-link" href="{{social_url type="threads"}}" target="_blank" rel="noopener">{{> "icons/threads"}}</a>
-                        {{/if}}
-                        {{#if mastodon}}
-                            <a class="author-profile-social-link" href="{{social_url type="mastodon"}}" target="_blank" rel="noopener">{{> "icons/mastodon"}}</a>
-                        {{/if}}
-                        {{#if tiktok}}
-                            <a class="author-profile-social-link" href="{{social_url type="tiktok"}}" target="_blank" rel="noopener">{{> "icons/tiktok"}}</a>
-                        {{/if}}
-                        {{#if youtube}}
-                            <a class="author-profile-social-link" href="{{social_url type="youtube"}}" target="_blank" rel="noopener">{{> "icons/youtube"}}</a>
-                        {{/if}}
-                        {{#if instagram}}
-                            <a class="author-profile-social-link" href="{{social_url type="instagram"}}" target="_blank" rel="noopener">{{> "icons/instagram"}}</a>
-                        {{/if}}
-                    </div>
-                </footer>
-
-            </div>
-            </div>
-
-        </section>
+        {{!-- Cover banner --}}
+        {{#if cover_image}}
+            <div class="oss-author-cover" style="background-image:url('{{img_url cover_image size="xl"}}')"></div>
+        {{else}}
+            <div class="oss-author-cover oss-author-cover--plain"></div>
+        {{/if}}
         {{/author}}
 
+        <div class="oss-author-card">
+            <div class="oss-author-identity">
+                {{#author}}
+                    {{#if profile_image}}
+                        <img class="oss-author-avatar" src="{{img_url profile_image size="l"}}" alt="{{name}}" loading="eager" />
+                    {{else}}
+                        <div class="oss-author-avatar oss-author-avatar--placeholder">{{> "icons/avatar"}}</div>
+                    {{/if}}
+                    <h1 class="oss-author-name">{{name}}</h1>
+                    <span class="oss-author-badge">{{t "Original Author"}}</span>
+                {{/author}}
+            </div>
+
+            {{#author}}{{#if bio}}<p class="oss-author-bio">{{bio}}</p>{{/if}}{{/author}}
+
+            <div class="oss-author-stats">
+                <div class="oss-author-stat">
+                    {{!-- posts.length lives in the page (top-level) context, same as {{#foreach posts}} — reliable here --}}
+                    <span class="oss-author-stat-num">{{posts.length}}</span>
+                    <span class="oss-author-stat-label">{{t "Posts"}}</span>
+                </div>
+                {{#author}}{{#if location}}
+                    <div class="oss-author-stat">
+                        <span class="oss-author-stat-num oss-author-stat-num--text">{{location}}</span>
+                        <span class="oss-author-stat-label">{{t "Location"}}</span>
+                    </div>
+                {{/if}}{{/author}}
+            </div>
+
+            {{#author}}
+            <div class="oss-author-meta">
+                {{#if website}}
+                    <a class="oss-author-website" href="{{website}}" target="_blank" rel="noopener">{{website}}</a>
+                {{/if}}
+            </div>
+
+            <div class="oss-author-social">
+                {{#if twitter}}
+                    <a class="oss-author-social-link" href="{{social_url type="twitter"}}" target="_blank" rel="noopener" aria-label="X">{{> "icons/x"}}</a>
+                {{/if}}
+                {{#if facebook}}
+                    <a class="oss-author-social-link" href="{{social_url type="facebook"}}" target="_blank" rel="noopener" aria-label="Facebook">{{> "icons/facebook"}}</a>
+                {{/if}}
+                {{#if linkedin}}
+                    <a class="oss-author-social-link" href="{{social_url type="linkedin"}}" target="_blank" rel="noopener" aria-label="LinkedIn">{{> "icons/linkedin"}}</a>
+                {{/if}}
+                {{#if bluesky}}
+                    <a class="oss-author-social-link" href="{{social_url type="bluesky"}}" target="_blank" rel="noopener" aria-label="Bluesky">{{> "icons/bluesky"}}</a>
+                {{/if}}
+                {{#if threads}}
+                    <a class="oss-author-social-link" href="{{social_url type="threads"}}" target="_blank" rel="noopener" aria-label="Threads">{{> "icons/threads"}}</a>
+                {{/if}}
+                {{#if mastodon}}
+                    <a class="oss-author-social-link" href="{{social_url type="mastodon"}}" target="_blank" rel="noopener" aria-label="Mastodon">{{> "icons/mastodon"}}</a>
+                {{/if}}
+                {{#if tiktok}}
+                    <a class="oss-author-social-link" href="{{social_url type="tiktok"}}" target="_blank" rel="noopener" aria-label="TikTok">{{> "icons/tiktok"}}</a>
+                {{/if}}
+                {{#if youtube}}
+                    <a class="oss-author-social-link" href="{{social_url type="youtube"}}" target="_blank" rel="noopener" aria-label="YouTube">{{> "icons/youtube"}}</a>
+                {{/if}}
+                {{#if instagram}}
+                    <a class="oss-author-social-link" href="{{social_url type="instagram"}}" target="_blank" rel="noopener" aria-label="Instagram">{{> "icons/instagram"}}</a>
+                {{/if}}
+                {{#if rss}}
+                    <a class="oss-author-social-link" href="{{url}}" target="_blank" rel="noopener" aria-label="RSS">{{> "icons/rss"}}</a>
+                {{/if}}
+            </div>
+
+            {{#if @site.members_enabled}}
+                <div class="oss-author-actions">
+                    {{#unless @member}}
+                        {{#unless @site.members_invite_only}}
+                            <a class="oss-author-action oss-author-action--ghost" href="#/portal/signin" data-portal="signin">{{t "Sign in"}}</a>
+                            <a class="oss-author-action oss-author-action--solid" href="#/portal/signup" data-portal="signup">{{t "Subscribe"}}</a>
+                        {{else}}
+                            <a class="oss-author-action oss-author-action--solid" href="#/portal/signin" data-portal="signin">{{t "Sign in"}}</a>
+                        {{/unless}}
+                    {{else}}
+                        <a class="oss-author-action oss-author-action--solid" href="#/portal/account" data-portal="account">{{t "Account"}}</a>
+                    {{/unless}}
+                </div>
+            {{/if}}
+            {{/author}}
+        </div>
+    </section>
+
+    <div class="oss-author-posts-head">
+        {{#author}}<h2>{{t "Articles by"}} {{name}}</h2>{{/author}}
+    </div>
+
+    <div class="post-feed">
         {{#foreach posts}}
             {{!-- The tag below includes the markup for each post - partials/post-card.hbs --}}
             {{> "post-card"}}
         {{/foreach}}
-
     </div>
 
     {{pagination}}

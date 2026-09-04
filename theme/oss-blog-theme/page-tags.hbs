@@ -1,0 +1,35 @@
+{{!< default}}
+{{!-- OSS Blog: a single "all tags" overview page (route /tags/).
+      Lists every public tag with its post count; clicking one opens its archive.
+      This is the page Ghost renders for the static page whose slug is "tags". --}}
+
+<main id="site-main" class="site-main outer">
+<div class="inner oss-tags-page">
+
+    <header class="oss-tags-header">
+        <h1 class="oss-tags-title">{{t "Tags"}}</h1>
+        <p class="oss-tags-sub">{{t "Browse every topic on the blog"}}</p>
+    </header>
+
+    {{#post}}
+    <div class="oss-tags-grid">
+        {{#get "tags" limit="all" filter="visibility:public" include="count.posts" order="count.posts desc"}}
+            {{#foreach tags}}
+                <a class="oss-tag-card" href="{{url}}">
+                    {{#if feature_image}}
+                        <div class="oss-tag-card-media" style="background-image:url({{img_url feature_image size="m"}});"></div>
+                    {{else}}
+                        <div class="oss-tag-card-media oss-tag-card-media--plain"><span>{{name}}</span></div>
+                    {{/if}}
+                    <div class="oss-tag-card-body">
+                        <span class="oss-tag-card-name">{{name}}</span>
+                        <span class="oss-tag-card-count">{{plural count.posts empty=(t "No posts") singular=(t "1 post") plural=(t "% posts")}}</span>
+                    </div>
+                </a>
+            {{/foreach}}
+        {{/get}}
+    </div>
+    {{/post}}
+
+</div>
+</main>
