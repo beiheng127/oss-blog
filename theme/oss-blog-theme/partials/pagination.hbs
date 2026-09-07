@@ -1,0 +1,54 @@
+{{!--
+    自定义分页导航（覆盖 Ghost / Casper 内置的 pagination 模板）
+    可用变量：page / pages / total / limit / prev / next，helper：page_url
+
+    设计要点：
+    - 只有 1 页时完全不渲染，避免出现「第 1 / 1 页」这种多余提示。
+    - 用数字页码 + 上一页/下一页，比 Casper 默认的无限滚动更好定位。
+    - 页码列表靠 match 逐个展开（Handlebars 没有 range），这里最多支持 9 页；
+      若将来文章超过 9 页，末尾会追加「末页」按钮兜底。
+--}}
+{{#match pages ">" 1}}
+    <nav class="oss-pagination" role="navigation" aria-label="分页导航">
+
+        {{#if prev}}
+            <a class="oss-page-btn oss-page-prev" href="{{page_url prev}}" rel="prev" aria-label="上一页">
+                <svg class="oss-page-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>上一页</span>
+            </a>
+        {{else}}
+            <span class="oss-page-btn is-disabled" aria-hidden="true">
+                <svg class="oss-page-icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>上一页</span>
+            </span>
+        {{/if}}
+
+        <span class="oss-page-numbers">
+            {{#match pages ">" 0}}<a class="oss-page-num{{#match page 1}} is-current{{/match}}" href="{{page_url 1}}"{{#match page 1}} aria-current="page"{{/match}}>1</a>{{/match}}
+            {{#match pages ">" 1}}<a class="oss-page-num{{#match page 2}} is-current{{/match}}" href="{{page_url 2}}"{{#match page 2}} aria-current="page"{{/match}}>2</a>{{/match}}
+            {{#match pages ">" 2}}<a class="oss-page-num{{#match page 3}} is-current{{/match}}" href="{{page_url 3}}"{{#match page 3}} aria-current="page"{{/match}}>3</a>{{/match}}
+            {{#match pages ">" 3}}<a class="oss-page-num{{#match page 4}} is-current{{/match}}" href="{{page_url 4}}"{{#match page 4}} aria-current="page"{{/match}}>4</a>{{/match}}
+            {{#match pages ">" 4}}<a class="oss-page-num{{#match page 5}} is-current{{/match}}" href="{{page_url 5}}"{{#match page 5}} aria-current="page"{{/match}}>5</a>{{/match}}
+            {{#match pages ">" 5}}<a class="oss-page-num{{#match page 6}} is-current{{/match}}" href="{{page_url 6}}"{{#match page 6}} aria-current="page"{{/match}}>6</a>{{/match}}
+            {{#match pages ">" 6}}<a class="oss-page-num{{#match page 7}} is-current{{/match}}" href="{{page_url 7}}"{{#match page 7}} aria-current="page"{{/match}}>7</a>{{/match}}
+            {{#match pages ">" 7}}<a class="oss-page-num{{#match page 8}} is-current{{/match}}" href="{{page_url 8}}"{{#match page 8}} aria-current="page"{{/match}}>8</a>{{/match}}
+            {{#match pages ">" 8}}<a class="oss-page-num{{#match page 9}} is-current{{/match}}" href="{{page_url 9}}"{{#match page 9}} aria-current="page"{{/match}}>9</a>{{/match}}
+            {{#match pages ">" 9}}<span class="oss-page-dots">…</span><a class="oss-page-num" href="{{page_url pages}}">{{pages}}</a>{{/match}}
+        </span>
+
+        {{#if next}}
+            <a class="oss-page-btn oss-page-next" href="{{page_url next}}" rel="next" aria-label="下一页">
+                <span>下一页</span>
+                <svg class="oss-page-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        {{else}}
+            <span class="oss-page-btn is-disabled" aria-hidden="true">
+                <span>下一页</span>
+                <svg class="oss-page-icon" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+        {{/if}}
+
+        <span class="oss-page-status">共 {{total}} 篇 · 第 {{page}} / {{pages}} 页</span>
+
+    </nav>
+{{/match}}

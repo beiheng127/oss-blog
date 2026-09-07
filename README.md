@@ -81,28 +81,36 @@ oss-blog/
 
 **② 邮件 / 注册登录配置（`runtime/config.development.json` 的 `mail` 段）**
 
-Ghost 的会员注册/登录用的是"邮箱魔法链接"（发一封带验证链接的邮件给你），所以**必须配好能发信的 SMTP**，否则前台注册会报 `500 connect ECONNREFUSED`。
-
-本项目用的是 QQ 邮箱 SMTP：
+Ghost 的会员注册/登录用的是"邮箱魔法链接"（发一封带验证链接的邮件给你）。本项目**当前已配好真实 QQ SMTP**，验证邮件**真发到你的真实邮箱**（默认收件人 `ruia36791@163.com`）：
 
 ```json
 "mail": {
   "transport": "SMTP",
-  "from": "Ghost Blog <你的QQ号@qq.com>",
+  "from": "Ghost Blog <934705339@qq.com>",
   "options": {
     "host": "smtp.qq.com",
     "port": 465,
     "secure": true,
-    "auth": { "user": "你的QQ号@qq.com", "pass": "你的SMTP授权码" }
+    "auth": {
+      "user": "934705339@qq.com",
+      "pass": "你的QQ邮箱SMTP授权码(16位)"
+    }
   }
 }
 ```
 
-关键点：
-
-- `pass` 用的是 QQ 邮箱的 **SMTP 授权码**（不是 QQ 密码），在 QQ 邮箱网页版 设置 → 账户 → 开启 SMTP 服务后生成。
-- **网络注意**：`smtp.qq.com` 的 465/587 端口在部分校园网/公司网会被拦截（本机实测 `smtp.qq.com` 连 443 都不通），此时注册邮件一样发不出去。若遇到，改用一个能通的 SMTP（比如阿里云邮件推送），或改用本地 MailHog 假邮箱做演示。
+**关键点**：
+- `pass` 是 **QQ 邮箱 SMTP 授权码**（16 位字符串，**不是登录密码**）。在 `mail.qq.com` 网页版 设置 → 账户 → POP3/IMAP/SMTP/Exchange/CardDAV/CalDAV服务 → 开启"IMAP/SMTP服务" → 生成授权码。
+- 端口 465 用 SSL，所以 `secure: true`。QQ 不接受 25 端口，必须用 465 或 587。
+- `from` 与 `auth.user` 必须一致（QQ 会拒绝"发件人假冒"）。
+- 网络：本机到 `smtp.qq.com:465` 直连通畅，不需要代理。
+- **`config.development.json` 整个 `runtime/` 目录都已被 `.gitignore` 忽略，不会被推到 GitHub。**
+- **登录流程**：前台点"注册/登录" → 填邮箱 → 去**自己的真实邮箱**（163/QQ/任意）收件箱找邮件 → 点邮件里的链接 → 完成登录。
 - **管理员后台登录不需要邮件**，`/ghost` 登录和内容管理照常；只有"前台访客注册成会员"才依赖这个 SMTP。
+
+**已验证链路**（2026-09-06 实测）：Ghost 触发 send-magic-link → QQ SMTP (`newxmesmtplogicsvrsza73-0.qq.com`) → AUTH PLAIN 通过 → MAIL FROM/RCPT TO → DATA → `250 OK: queued as.`。邮件进入 QQ 队列后由 QQ 负责投递到收件人邮箱（通常 1–5 分钟到达 163）。
+
+**回退到本地假邮箱**（不想发真实邮件，只本地测试）：把 `mail.options` 改回 `127.0.0.1:2525`，再用 `start-ghost.bat` 一键拉起 `smtp-catch.js` + `extract-magic-link.js --watch` 这两个进程，链接从 `runtime/inbox/latest-magic-link.txt` 拿。
 
 **③ 激活的主题**
 
@@ -237,23 +245,107 @@ Ghost 默认**没有**"一次看到所有标签"的入口——想按标签浏�
 
 > 技术备注：作者字段（名字/bio/所在地/社交/订阅）都要包在 `{{#author}}...{{/author}}` 里取；而"文章数"要用页面顶层上下文的 `{{posts.length}}`（它和 `{{#foreach posts}}` 在同一个作用域）——如果写成 `{{#author}}{{posts.length}}{{/author}}` 会取到空，因为 `{{#author}}` 块会把 `posts` 阴影掉。这是个容易踩的坑。
 
+### 3.11 分页导航（`package.json` + `partials/pagination.hbs` + `oss-design.css` + `default.hbs`）
+
+文章超过一页后，Casper 默认的无限滚动会"假装没分页"——首页只看到滚动条一拉到底，但**所有页都堆在同一页里**，分页按钮完全不存在。原因不是 `.pagination` 没渲染，是下面这一行没闭合好：
+
+```html
+<html lang="{{@site.locale}}" class="no-infinite-scroll{{#match @custom.color_scheme "Dark"}} dark-mode{{else match @custom.color_scheme "Auto"}} auto-color{{/match}}>
+```
+
+`class="no-infinite-scroll` 引号没补齐（HTML 规范要求属性值必须以 `"` 收尾），浏览器把 `<head>` 一直读到下一个 `"` 才结束属性——结果是 `classList.contains('no-infinite-scroll')` **永远 false**，Casper 的 `assets/built/casper.js`（包含打包后的 infinite-scroll.js）不会停下，滚动到底自动 fetch `/page/2/`、`/page/3/`、`/page/4/` 并插到当前 DOM。
+
+**修复**（四处协同）：
+
+1. `package.json` 的 `config.posts_per_page` 改成 `6`（25 篇 → 6×4+1=5 页）。
+2. 新建 `partials/pagination.hbs`，覆盖 Ghost 内置分页模板，做成"数字页码 + 上一页 / 下一页"的胶囊按钮组：
+   - 当前页高亮为渐变粉圆按钮（`is-current`）。
+   - `{{#match page n}}` 逐个展开页码 1–9，超过 9 页显示 `… 末页`。
+   - 仅在 `{{#match pages ">" 1}}` 时渲染（单页不显示"第 1 / 1 页"这种废话）。
+3. `default.hbs` 的 `<html>` 标签**双保险**：补齐 `class="no-infinite-scroll{{...}}"` 引号（让 Casper 的内置开关真正生效），同时 CSS 里 `.pagination{display:none !important}` 兜底（万一有第三方脚本）。
+4. `oss-design.css` 追加 `.oss-page-num` / `.oss-page-btn` 样式：渐变 hover、扁平胶囊、移动端折行、状态条（小字"共 25 篇 · 第 1 / 5 页"在下方居中）。
+
+> 备注：`package.json` 的 `config` 变更后需重启 Ghost 才生效（theme config 有缓存）。
+
+### 3.12 评论功能修复（数据库层）
+
+文章详情页的 `{{comments}}` helper 依赖 `posts.comment_id` 字段非空。本项目 9 篇老文章（占位脚本直写库）全部 `comment_id IS NULL`，导致评论区一片空白（"会员讨论 / 0 条评论"框架在，但无表单）。
+
+修复：直 SQL 批量补齐 + Ghost 后台 model 钩子的语义对齐：
+
+```sql
+UPDATE posts SET comment_id = id WHERE type='post' AND comment_id IS NULL;
+```
+
+正常路径下 `comment_id` 由 `core/server/models/post.js` 的钩子自动填：`if (!this.get('comment_id')) this.set('comment_id', this.id)`。**直接 SQL 写入绕过 model 层**，钩子不触发，所以脚本导入文章时 `seed-posts.js` 必须显式 `INSERT … comment_id = id`。下次写导入脚本时把这个写进文档。
+
+### 3.13 批量文章导入（`content/posts/` + `runtime/seed-posts.js`）
+
+不想在后台一篇篇点，用 markdown 源文件批量入库。流程：
+
+```
+content/posts/*.md   ──→   seed-posts.js   ──→   posts / tags / posts_tags / posts_authors
+                           (markdown-it → html + lexical → SQLite)
+```
+
+Markdown 源文件放在 **`content/posts/*.md`**（已入仓），支持简单 front matter：
+
+```markdown
+title: 文章标题
+slug: article-slug            # 唯一，对应 URL
+tags: [AI, Agent]             # 中文标签名，会被映射到既有/约定的英文 slug
+excerpt: 一句话摘要
+published_at: 2026-09-07 13:30:00
+```
+
+跑命令：
+
+```bash
+node runtime/seed-posts.js           # 执行导入
+node runtime/seed-posts.js --dry     # 只转换不写库，预览
+```
+
+两个关键约束：
+
+1. **`comment_id` 必须等于 `post.id`**（见 3.12）。脚本已强制。
+2. **标签 slug 要与库中已有标签一致**：seed-posts.js 顶部的 `slugMap` 把 `AI→ai / Agent→agent / 技术→tech / 前端→frontend / 秋招→campus-recruit / 生活→life / 开源→open-source / News→news` 显式映射。如果跳过映射直接写中文标签，会建出**重复标签**（同名中文 slug 与英文 slug 并存），前台 `/tags/` 会出现两个"AI"。
+
+当前 16 篇：15 篇（秋招 / 前端 / AI / Agent / 生活 / 技术，2026-09-07 批量写入）+ 1 篇 GPT-6 Astra。
+
+### 3.14 自定义设计样式（`assets/css/oss-design.css`）
+
+不经过 Gulp 编译、运行时直接 `<link>` 引入，方便快速改视觉。当前风格：
+
+- 顶部导航：紫红渐变 + 径向高光（`linear-gradient` 叠 `radial-gradient`）
+- 文章卡片：圆角 + 阴影 + hover 微浮 + 标签色块（左上小角标）
+- 标签总览卡：技术粉珊瑚、开源紫靛、生活天青绿、News 琥珀玫红、AI/Agent/前端 沿用主色
+- 页脚：深紫渐变 + 社交图标 + 订阅区
+- 分页按钮：渐变胶囊、hover 上浮（见 3.11）
+- 评论 / 代码块复制按钮 / 返回顶部按钮 配色统一
+
+改视觉只需改这一个文件，刷新就能看（Ghost 会缓存一次，但主题 CSS 改了浏览器要硬刷新 `Ctrl+Shift+R`）。
+
 ### 改动文件清单
 
-| 文件                                        | 改动类型                                        |
-| ----------------------------------------- | ------------------------------------------- |
-| `default.hbs`                             | 修改：进度条 HTML/JS（彩虹 scaleX）、页脚署名、引入新文件        |
-| `post.hbs`                                | 修改：标签 chips、相关推荐面板                          |
-| `author.hbs`                              | **改版**：作者主页博主风（封面+头像+统计+社交+订阅）              |
-| `page-tags.hbs`                           | **新增**：`/tags/` 标签总览页模板                     |
-| `partials/post-card.hbs`                  | 修改：作者名、阅读时长徽章                               |
-| `assets/css/oss-blog.css`                 | 修改：进度条彩虹/徽章/chips/推荐面板样式 + 标签页样式 + 作者页样式    |
-| `assets/built/oss-blog.css`               | 修改：同步上述样式（页面实际加载这个）                         |
-| `assets/css/oss-enhance.css`              | **新增**：复制按钮、返回顶部样式                          |
-| `assets/js/oss-enhance.js`                | **新增**：复制按钮、返回顶部逻辑                          |
-| `locales/zh.json`、`locales-local/zh.json` | 修改：中文翻译（含标签页 + 作者页文案）                       |
-| `package.json`                            | 修改：`show_related_posts` 自定义设置               |
-| **数据库** `posts` 表                         | 新增：slug=`tags` 的静态页面记录 + `posts_authors` 关联 |
-| **数据库** `settings.navigation`             | 修改：About 后追加「标签」导航项                         |
+| 文件 | 改动类型 |
+| --- | --- |
+| `default.hbs` | 修改：`<html>` 引号补齐关闭无限滚动、引入 oss-design.css、页脚署名 |
+| `post.hbs` | 修改：标签 chips、相关推荐面板 |
+| `author.hbs` | **改版**：作者主页博主风（封面+头像+统计+社交+订阅） |
+| `page-tags.hbs` | **新增**：`/tags/` 标签总览页模板 |
+| `partials/post-card.hbs` | 修改：作者名、阅读时长徽章 |
+| `partials/pagination.hbs` | **新增**：数字页码导航（覆盖内置分页） |
+| `assets/css/oss-blog.css` | 修改：进度条彩虹/徽章/chips/推荐面板样式 + 标签页样式 + 作者页样式 |
+| `assets/built/oss-blog.css` | 修改：同步上述样式（页面实际加载这个） |
+| `assets/css/oss-enhance.css` | **新增**：复制按钮、返回顶部样式 |
+| `assets/js/oss-enhance.js` | **新增**：复制按钮、返回顶部逻辑 |
+| `assets/css/oss-design.css` | **新增**：自定义设计样式（粉紫渐变 + 分页胶囊） |
+| `locales/zh.json`、`locales-local/zh.json` | 修改：中文翻译（含标签页 + 作者页文案） |
+| `package.json` | 修改：`posts_per_page: 6` + `show_related_posts` 自定义设置 |
+| `start-ghost.bat` / `stop-ghost.bat` | 修改：smtp-catch / extract-watcher 已无用，因走真实 QQ SMTP |
+| `content/posts/*.md` | **新增**：16 篇 Markdown 文章源（秋招 / 前端 / AI / Agent / GPT-6） |
+| **数据库** `posts` 表 | 新增 16 篇 + 标签映射修复；`UPDATE posts SET comment_id = id WHERE comment_id IS NULL` 修评论区 |
+| **数据库** `settings.navigation` | 修改：About 后追加「标签」导航项 |
 
 ---
 
@@ -295,6 +387,34 @@ C:\Users\ruia3\AppData\Local\nvm\v22.23.1\node.exe current\index.js
 2. 后台 Posts → New post，写正文、打标签（**相关推荐靠标签匹配，标签一定要打**）
 3. Publish，前台立即可见
 4. 用完 `stop-ghost.bat` 停止
+
+### 4.5 批量导入文章（`runtime/seed-posts.js`）
+
+Markdown 源文件放在 **`content/posts/*.md`**（已入仓），带简单 front matter：
+
+```markdown
+title: 文章标题
+slug: article-slug            # 唯一，对应 URL
+tags: [AI, Agent]             # 中文标签名，会被映射到既有/约定 slug
+excerpt: 一句话摘要
+published_at: 2026-09-07 10:00:00
+
+## 正文正文（Markdown，支持标题/列表/代码块/引用/加粗/行内代码）
+```
+
+导入命令：
+
+```bash
+node runtime/seed-posts.js           # 执行导入（Markdown -> HTML + lexical -> SQLite）
+node runtime/seed-posts.js --dry     # 只转换不写库，预览
+```
+
+两个关键点（避免踩坑）：
+
+1. **`comment_id` 必须等于 `post.id`**。直接写库会绕过 Ghost model 层自动补全 `comment_id` 的钩子，导致前台 `{{comments}}` 不渲染评论区。脚本已强制 `comment_id = id`。
+2. **标签 slug 要与库中已有标签一致**（`/` 秋招→`campus-recruit`、技术→`tech`、前端→`frontend`、Agent→`agent`、AI→`ai`、开源→`open-source`、生活→`life`、News→`news`）。若写入新的中文标签名却未在 `seed-posts.js` 的 `slugMap` 里配好英文 slug，会建出**重复标签**（同名中文 slug 与英文 slug 并存），需用 `runtime/_fix-tags.js` 重映射并删除重复项。
+
+已有内容：`content/posts/` 下 15 篇（秋招时间线 / 简历项目 / 校招面试清单 / 2026 前端 / SSE 流式渲染 / 端侧 AI / Next.js 三个项目 / Agent 入门 / aether-desk 复盘 / RAG / Agent 技术栈 / AI 与程序员 / AI 行业观察 / 我实际用 AI / 大三复盘），标签覆盖 秋招 / 前端 / AI / Agent / 技术 / 生活 / 开源 / News。
 
 ### 4.4 修改主题后怎么生效
 
@@ -354,6 +474,103 @@ ghost-cli 会调 `reg.exe` 查注册表，部分受限 shell 里被拉黑。解�
 
 `gulp locales` 会从 `@tryghost/theme-translations` 重新合并，自己的翻译要放 `locales-local/`。
 
+**8. 会员注册/登录报 "登录尝试次数过多，请在12分钟后重试"（HTTP 429）**
+
+在本地反复调试注册/登录时，几次提交后会撞到 Ghost 内置的**暴力破解限流器**（`@tryghost/brute-knex` + `express-brute`），默认 `freeRetries: 2`、`minWait: 500ms`，等待时间按斐波那契递增，最大 15 分钟 —— 表现就是前端弹窗一直 "请在12分钟后重试"。
+
+链路：`POST /members/api/send-magic-link` 上挂了两个限流器 `membersAuthEnumeration`（按 IP 防枚举，用 `spam.member_login`）和 `membersAuth`（按邮箱防爆破，用 `spam.user_login`），都在 `core/server/web/shared/middleware/api/spam-prevention.js`。阈值来自 `config.development.json` 的 `spam` 段，**Ghost 启动时载入到模块作用域，热修改无效**。
+
+修复：在 `runtime/config.development.json` 里把两个限流段都提到本地开发足够宽松（100000 次 / 7 天），重启 Ghost 即生效：
+
+```json
+"spam": {
+  "user_login":  { "freeRetries": 100000, "lifetime": 604800 },
+  "member_login":{ "freeRetries": 100000, "lifetime": 604800 }
+}
+```
+
+验证脚本（直接打 send-magic-link，携带 integrity token）：
+
+```bash
+TOKEN=$(curl -s -c cj.txt http://localhost:2368/members/api/integrity-token)
+curl -s -b cj.txt -c cj.txt -X POST http://localhost:2368/members/api/send-magic-link \
+  -H "Content-Type: application/json" -H "Origin: http://localhost:2368" \
+  --data "{\"name\":\"Test\",\"email\":\"x@example.com\",\"emailType\":\"signup\",\"integrityToken\":\"$TOKEN\"}"
+# 期望 HTTP 201，body 形如 {"inboxLinks":{...}}
+```
+
+**9. 邮件魔法链接不在 inbox，而在 Ghost 日志里**
+
+即便 SMTP 端口（2525）监听正常、`smtp-catch.js` 也工作良好，Ghost 6.59 内置 nodemailer 在 **pipeling `RCPT+DATA+headers` 后会主动关闭连接**，正文和终止点 `.` 永远没机会发出去（`ECONNABORTED` / `closed (state=data)`）—— 这是 mailer 侧行为，smtp-catch 改不了。
+
+但 Ghost **同时会把邮件正文（包括魔法链接 URL）打印到 stdout**。解法是新增 `runtime/extract-magic-link.js --watch`：用 `fs.watch` 监听 `runtime/ghost-dev.log`，只要日志新增里出现 `/members/?token=...&action=signup...` 就把最新一条 URL 落到 `runtime/inbox/latest-magic-link.txt`。
+
+完整启动链路（已写进 `start-ghost.bat`）：
+1. SMTP 捕获（2525）
+2. 魔法链接 watcher（监听 `inbox/*.eml` base64 解码 + `ghost-dev.log` 兜底）
+3. Ghost 本身（2368）
+
+用户注册流程：填表 → 等 201 → 打开 `inbox/latest-magic-link.txt` 拿链接 → 浏览器访问 → 完成注册。已用 `end2end@test.local` 端到端跑通（HTTP 200 + `?success=true` + session JWT 颁发成功）。
+
+---
+
+**踩坑：前台注册/登录 "没有发送验证码"（201 成功但永远收不到链接）**
+
+现象：注册弹窗提示"邮件已发送"，`send-magic-link` 也返回 201，但 `latest-magic-link.txt` 不更新、数据库也没有新成员。
+
+根因：本地 `smtp-catch.js` 的两个 SMTP 协议错误导致 nodemailer 把邮件"发送"过程掐断——
+1. **多行 EHLO 响应格式错误**：RFC 5321 规定多行回复的**中间行用连字符**（`250-smtp-catch`），只有最后一行用空格（`250 HELP`）。先前全用空格，nodemailer 读到第一行 `250 smtp-catch` 就误以为握手完成，立刻 `MAIL/RCPT/DATA` 全发出去，我们的响应和它的命令**全错位**（`DATA` 收到 `250 HELP` 而不是 `354`）→ nodemailer 认为 DATA 被拒，直接关连接、正文和终止点 📦 都没发。
+2. **宣告了 `PIPELINING`**：服务器允许管线化后，nodemailer 把命令一次性 burst 过来，加剧上面的错位。
+
+修复（`runtime/smtp-catch.js`）：
+- EHLO 改成正确的多行格式（`250-` 连字符 + 末行 `250 ` 空格）。
+- 去掉 `PIPELINING` 能力宣告，让 nodemailer 一条命令等一个响应。
+
+验证：修复后 `sendMail` 返回 `response="250 OK queued"`，`inbox/*.eml` 真正落下邮件；`extract-magic-link.js` 升级为**解码 `inbox/*.eml` 的 base64 正文**来取链接（因为 Ghost 投递成功后不再把邮件打印到 stdout，旧的"读日志"方式失效）。用 `ruia36791@163.com` 端到端跑通：201 → 链接落盘 → 点击 → `/?action=signup&success=true` → session `sub=ruia36791@163.com`。
+
+---
+
+**10. 首页看着像没分页，25 篇全堆在一页**
+
+> 用户反馈："你这个分页并不是分页啊，数据库也没有做好，你还是把所有的数据在一页上了啊"。
+
+排查步骤：
+1. `curl http://localhost:2368/ | grep -oc '<article'` —— 服务端确实只返回 6 篇，分页服务正常。
+2. 用真实 Chrome（headless + CDP）执行 `document.querySelectorAll('article').length`，**滚动前 6 篇、滚动 6 次后变成 24 篇**——有人在前端静默拉页。
+3. `document.documentElement.className` 一查：值是 `no-infinite-scroll>\n<head>...<meta charset=`（**一坨 HTML 都被吞进了 class 属性**），因为某次改 `<html>` 标签时只写了 `class="no-infinite-scroll{{#match...}}` 但忘了补结尾的 `"`。
+4. Casper 的 `assets/built/casper.js` 第 17 行就是 `if (document.documentElement.classList.contains('no-infinite-scroll')) return;` —— 属性被吞后整个值成了单个 class 名，contains 永远 false，无限滚动照常拉页。
+5. `<html lang="zh" class="no-infinite-scroll>` 看着"差不多"，浏览器静默容忍，肉眼看 HTML 文本也没问题（属性值会读到下一个 `"` 才结束），**只有 `classList.contains` 这种 JS 判断才会暴露**。
+
+**修复**：`<html>` 标签改成 `class="no-infinite-scroll{{#match ...}} auto-color{{/match}}"`（双引号闭环）+ CSS 里 `.pagination{display:none !important}` 兜底。CDP 复测：滚动 6 次仍稳定 6 篇。
+
+**教训**：HTML 属性值没闭合不会报错，但会把后面所有 HTML 吞进属性。grep 自检只看到 `<html[^>]*>` 第一段就停，**会漏掉引号问题**。判定模板 / 主题 bug 时，**先看 `document.documentElement.className` 的实际值**，比看 HTML 源文件可靠。
+
+---
+
+**11. 老 9 篇文章里出现 `<p>undefined</p>` 字样**
+
+> 这是早期"模拟数据脚本"留下的印记——某些字段没取到（接口返回 undefined），markdown 渲染时直接写进 HTML。
+
+修复：一次性 SQL 清理 + lexical JSON 同字段清空：
+
+```sql
+UPDATE posts
+SET html       = REPLACE(html, '<p>undefined</p>', ''),
+    plaintext = REPLACE(plaintext, 'undefined', ''),
+    lexical   = JSON_MODIFY(lexical, ...)  -- lexical 里也有，需遍历 children
+WHERE html LIKE '%undefined%' OR plaintext LIKE '%undefined%';
+```
+
+lexical 是 JSON 结构，递归遍历 `node.text === 'undefined'` 改成空字符串即可。详见 `runtime/_fix-undefined.js`（一次性脚本，写完即删）。
+
+---
+
+**12. 批量导入文章时中文标签建出重复项**
+
+`seed-posts.js` 第一次跑时，`tags: [技术, 前端, AI, Agent, ...]` 中 `技术` 中文名被直接当成 slug 用（`name.toLowerCase().replace(/\s+/g,'-')`），库里已有 `slug='tech'` 的"技术"标签，又新建了一个 `slug='技术'` 的同名标签，**`/tags/` 页面出现两个"技术"**。
+
+修复：在 seed-posts.js 顶部加显式 `slugMap`，中文标签名 → 既定的英文 slug。**后果**：如果将来增加新中文标签，必须先在 slugMap 里登记英文 slug，否则仍会建出重复项。
+
 ---
 
 ## 七、测试
@@ -390,13 +607,55 @@ npm run test   # gscan 检查
 
 ## 十、还没做完 / 待补充
 
-- [ ] 后台激活 `oss-blog-theme` 后，截一张前台 + 后台的图放进来
+### 已完成 ✅
+
 - [x] ~~建 8 篇文章 + 3 个标签 + 2 个账号~~（2026-09-04 已注入模拟数据，3 作者 / 4 标签 / 8 文章，密码 ghost123）
 - [x] ~~相关推荐布局修正~~（2026-09-04：推荐面板改 720px 对齐正文 + 卡片居中）
 - [x] ~~标签总览页 `/tags/`~~（2026-09-04：新增 page-tags.hbs + 导航「标签」Tab，About 后面）
 - [x] ~~阅读进度条改彩虹渐变~~（2026-09-04：单一主题色 → 彩虹渐变，scaleX 裁剪不压缩）
 - [x] ~~作者主页改版博主风~~（2026-09-04：author.hbs 封面横幅 + 悬浮头像 + 文章数统计 + 社交图标 + 订阅按钮）
-- [ ] 把"相关推荐"的实际效果截图（内容已就位，打开任一文章详情页即可看到）
-- [ ] 写一篇带代码块的文章，验证复制按钮 + 返回顶部按钮效果（代码块文章目前还没带）
-- [ ] GitHub 建仓、推送、开 PR、自审记录补全
-- [ ] Live Demo 链接（如果部署到公网）
+- [x] ~~评论功能修复~~（2026-09-06：UPDATE posts SET comment_id = id WHERE comment_id IS NULL，9 篇老文章评论区恢复）
+- [x] ~~邮箱魔法链接真发到真实邮箱~~（2026-09-06：QQ SMTP 配通，934705339@qq.com → 任意 163/QQ 收件，授权码不入仓）
+- [x] ~~429 限流放宽~~（2026-09-06：runtime/config.development.json 加 spam.freeRetries=100000/7d）
+- [x] ~~分页导航重做~~（2026-09-07：数字页码 1–5 + no-infinite-scroll 引号修复 + 渐变胶囊按钮）
+- [x] ~~批量文章 15 篇入库~~（2026-09-07：秋招 / 前端 / AI / Agent / 生活 / 技术，覆盖 6 个主标签）
+- [x] ~~GPT-6 Astra 专题文章~~（2026-09-07：含三领域对比表、嵌入官方对比图、共 25 篇）
+- [x] ~~自定义设计样式 oss-design.css~~（2026-09-07：粉紫渐变 + 卡片阴影 + 分页胶囊 + 标签卡）
+- [x] ~~老文章 `<p>undefined</p>` 清理~~（2026-09-07：UPDATE 7 篇文章的 html + plaintext + lexical）
+
+### 截图素材（README 用）
+
+- [ ] 把下面两张截图放到 README 顶部或单独 docs 目录，并加简短说明
+
+![前台页面](tests\前台页面.png)
+![后台页面](tests\后台页面.png)
+
+### 真正的待办 🟡
+
+> 按"距离上线"和"影响业务"排过序。短期能自己做完的标 ⭐，需要外部资源（部署 / 设计）的标 🌐。
+
+- [ ] ⭐ 给 4 个新标签（AI / 前端 / Agent / 秋招）上传 `feature_image`（标签页卡背景，目前是渐变兜底）—— 后台 `/ghost/#/tags/` 直接拖图
+- [ ] ⭐ 把 9 篇老占位文章重写成实质内容（目前 html 多在 250–290 字，是模板生成的"工程化"等短文）—— 否则读者进来看"为什么值得关注"这种占位句会失去信任
+- [ ] ⭐ RSS feed 重新生成一次（数据库新增了 16 篇但订阅源可能还停在 8 篇）—— 后台 Settings → Labs → Reinitialize
+- [ ] 🌐 部署到公网（Cloudflare Pages + Ghost proxy / Railway / 一台便宜 VPS），拿到 https 域名
+- [ ] 🌐 Live Demo 链接 + 部署架构图（README 顶部加 banner）
+- [ ] ⭐ 给 4 个新文章分类写 cover 缩略图（feature_image 自动生成工具：Unsplash Source + 文章 slug）
+- [ ] ⭐ 阅读时长统计回归（之前 8 篇老文章的 `reading_time` 字段是 0，新 16 篇需要重算 —— 后台 Settings → Labs → Reindex）
+- [ ] ⭐ 站内搜索：Ghost 默认 sodo-search 仅搜标题，正文搜索要装 Search 插件或自己写 helper
+- [ ] ⭐ 代码高亮：theme 主题需要重新跑 `gulp build` 加 prism.js，文章里 ```language-* 才能渲染彩色
+- [ ] ⭐ GitHub PR / Issue 模板（如果开放给 community 用）
+- [ ] ⭐ 备份自动化：`runtime/content/data/ghost-local.db` 每天 dump 一次到 `runtime/backups/`，保留 30 天
+- [ ] ⭐ Lighthouse 跑一次：性能 / SEO / 可访问性 三项基本过线
+- [ ] ⭐ sitemap.xml 已存在（200 OK），但需要提交到 Google Search Console
+
+### 长期想做的事 🔵
+
+- [ ] 主题迁移到 Gulp 5 + ESM（现在混用 require/esm，部署时容易踩）
+- [ ] 把 `seed-posts.js` 抽成独立 npm 包（`@oss-blog/seed`），允许其他人 fork 仓库后一键建自己的内容
+- [ ] 加一个"文章视图统计"面板（在 `actions` 表已有数据，前端读出 Top 10）
+- [ ] 评论支持 Markdown / 图片上传（默认只支持纯文本）
+- [ ] 多语言（en / zh 双语切换，`locale: [en, zh]` + 路由切换）
+
+---
+
+> **更新节奏**：上述 TODO 每完成一项，把"已完成"段对应项的 strikethrough 加上日期，更新"完成日期"，并视情况在 CHANGELOG.md 留一行。

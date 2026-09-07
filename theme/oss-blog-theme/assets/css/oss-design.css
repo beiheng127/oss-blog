@@ -1,0 +1,395 @@
+/* ==========================================================================
+   OSS Blog — design polish (loaded AFTER oss-blog.css so these rules win).
+   Adds a cohesive, premium palette on top of the Casper base:
+     - gradient brand header (pink -> magenta -> violet)
+     - tinted dark footer
+     - gradient buttons & accent pills
+     - image-like backgrounds for the tag overview cards (page-tags.hbs)
+     - comment panel polish
+   No build step needed: referenced directly in default.hbs.
+   ========================================================================== */
+
+:root {
+    /* OSS design accents (keep Ghost's --ghost-accent-color for links) */
+    --oss-pink:   #ff1a75;
+    --oss-pink-2: #ff4da6;
+    --oss-coral:  #ff7a5c;
+    --oss-violet: #a855f7;
+    --oss-indigo: #6a5af9;
+    --oss-sky:    #38bdf8;
+    --oss-green:  #6bcb77;
+    --oss-amber:  #f59e0b;
+    --oss-rose:   #fb7185;
+    --oss-ink:    #171321;
+    --oss-ink-2:  #6b6478;
+    --oss-line:   #ece8f2;
+
+    /* brand gradient used across header / buttons / hero */
+    --oss-grad-brand: linear-gradient(120deg, #ff1a75 0%, #ff4da6 42%, #a855f7 100%);
+    --oss-grad-warm:  linear-gradient(120deg, #ff1a75 0%, #ff7a5c 100%);
+    --oss-grad-cool:  linear-gradient(120deg, #a855f7 0%, #6a5af9 100%);
+    --oss-grad-fresh: linear-gradient(120deg, #38bdf8 0%, #6bcb77 100%);
+    --oss-grad-sun:   linear-gradient(120deg, #f59e0b 0%, #fb7185 100%);
+
+    --oss-shadow: 0 18px 44px rgba(23, 19, 33, 0.10);
+    --oss-shadow-sm: 0 8px 20px rgba(23, 19, 33, 0.08);
+}
+
+/* ---- Brand header gradient (nav on cover pages + home cover) -------------- */
+.has-cover:not(.home-template) .gh-head,
+.site-header,
+.has-cover .site-header-content {
+    background:
+        radial-gradient(120% 140% at 15% 0%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 55%),
+        radial-gradient(120% 160% at 100% 20%, rgba(168, 85, 247, 0.42) 0%, rgba(168, 85, 247, 0) 60%),
+        var(--oss-grad-brand);
+    background-color: var(--oss-pink); /* fallback if gradient is unsupported */
+    color: #fff;
+}
+
+.site-header {
+    box-shadow: inset 0 -40px 80px rgba(0, 0, 0, 0.06);
+}
+
+/* keep nav above the decorative layers */
+.has-cover:not(.home-template) .gh-head-inner,
+.site-header-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* header nav links & logo */
+.gh-head-menu .nav a,
+.gh-head-link {
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 600;
+}
+.gh-head-menu .nav a:hover,
+.gh-head-link:hover {
+    color: #fff;
+    opacity: 1;
+}
+
+/* ---- Gradient buttons ---------------------------------------------------- */
+.gh-head-button,
+.footer-cta-button,
+.gh-button,
+.gh-button-share {
+    background: var(--oss-grad-brand) !important;
+    background-color: var(--oss-pink) !important;
+    color: #fff !important;
+    border: 0 !important;
+    box-shadow: 0 8px 22px rgba(255, 26, 117, 0.32);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+.gh-head-button:hover,
+.footer-cta-button:hover,
+.gh-button:hover,
+.gh-button-share:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(255, 26, 117, 0.42);
+    filter: saturate(1.1);
+}
+
+/* ---- Accent pills (primary tag, related tag, reading badge) --------------- */
+.post-card-primary-tag,
+.oss-related-tag,
+.oss-reading-badge {
+    background: var(--oss-grad-brand) !important;
+    background-color: var(--oss-pink) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 14px rgba(255, 26, 117, 0.22);
+}
+.oss-reading-badge::before {
+    background: #fff;
+}
+
+/* ---- Post tag chips ------------------------------------------------------ */
+.oss-post-tag {
+    border-color: var(--oss-line);
+    background: rgba(255, 26, 117, 0.04);
+    color: var(--oss-ink-2);
+}
+.oss-post-tag:hover {
+    border-color: var(--oss-pink);
+    background: rgba(255, 26, 117, 0.08);
+    color: var(--oss-pink);
+}
+
+/* ---- Post cards: subtle lift + accent on hover --------------------------- */
+.post-card {
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: var(--oss-shadow-sm);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--oss-shadow);
+}
+.post-card-image-link::after {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, rgba(23, 19, 33, 0.25) 100%);
+}
+
+/* ---- Footer -------------------------------------------------------------- */
+.site-footer {
+    background: linear-gradient(180deg, #171321 0%, #0e0a15 100%);
+    color: #b7aec7;
+    border-top: 0;
+}
+.site-footer a {
+    color: #e9e2f5;
+}
+.site-footer a:hover {
+    color: #fff;
+}
+.site-footer .oss-theme-credit {
+    color: #8b83a0;
+}
+
+/* ==========================================================================
+   Tags overview cards (page-tags.hbs) — image-like gradients per card.
+   Each card's media area gets its own rich gradient so no two look alike.
+   ========================================================================== */
+.oss-tag-card {
+    border: 0;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: var(--oss-shadow-sm);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.oss-tag-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--oss-shadow);
+    border-color: transparent;
+}
+
+.oss-tag-card-media {
+    height: 132px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+/* image-like decorative background (gradient + grain) */
+.oss-tag-card-media--plain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(120% 120% at 20% 15%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 55%),
+        linear-gradient(135deg, #ff1a75, #ff4da6);
+    color: #fff;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+}
+
+/* decorative subtitle glyph behind the name */
+.oss-tag-card-media--plain::after {
+    content: "#";
+    position: absolute;
+    right: 14px;
+    bottom: -20px;
+    font-size: 7rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.14);
+    line-height: 1;
+}
+
+/* distinct palette per card (1-4) */
+.oss-tags-grid .oss-tag-card:nth-child(4n+1) .oss-tag-card-media--plain {
+    background:
+        radial-gradient(120% 120% at 20% 15%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 55%),
+        var(--oss-grad-warm);
+}
+.oss-tags-grid .oss-tag-card:nth-child(4n+2) .oss-tag-card-media--plain {
+    background:
+        radial-gradient(120% 120% at 20% 15%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 55%),
+        var(--oss-grad-cool);
+}
+.oss-tags-grid .oss-tag-card:nth-child(4n+3) .oss-tag-card-media--plain {
+    background:
+        radial-gradient(120% 120% at 20% 15%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 55%),
+        var(--oss-grad-fresh);
+}
+.oss-tags-grid .oss-tag-card:nth-child(4n+4) .oss-tag-card-media--plain {
+    background:
+        radial-gradient(120% 120% at 20% 15%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 40%),
+        var(--oss-grad-sun);
+}
+
+.oss-tag-card-body {
+    background: #fff;
+    padding: 18px 20px;
+}
+.oss-tag-card-name {
+    color: var(--oss-ink);
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+.oss-tag-card-count {
+    color: var(--oss-ink-2);
+}
+
+/* tags page header emphasis */
+.oss-tags-title {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.oss-tags-title::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 4px;
+    margin: 14px auto 0;
+    border-radius: 999px;
+    background: var(--oss-grad-brand);
+}
+
+/* ---- Comments polish ----------------------------------------------------- */
+.article-comments {
+    border-top: 1px solid var(--oss-line);
+    padding-top: 44px;
+}
+
+/* ---- Pagination ---------------------------------------------------------- */
+/* Casper hides .pagination unless infinite-scroll is off; we render our own
+   nav (partials/pagination.hbs) and style it as gradient pill buttons. */
+.oss-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 8vmin auto 0;
+    padding: 0 4vmin;
+    flex-wrap: wrap;
+}
+
+.oss-page-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    color: var(--oss-ink);
+    background: #fff;
+    border: 1px solid var(--oss-line);
+    box-shadow: var(--oss-shadow-sm);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.oss-page-btn .oss-page-icon {
+    width: 18px;
+    height: 18px;
+}
+
+a.oss-page-btn:hover {
+    transform: translateY(-2px);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 14px 30px rgba(255, 26, 117, 0.28);
+    background: var(--oss-grad-brand);
+}
+
+a.oss-page-prev:hover {
+    background: var(--oss-grad-cool);
+    box-shadow: 0 14px 30px rgba(106, 90, 249, 0.28);
+}
+
+.oss-page-btn.is-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* --- 数字页码 --- */
+.oss-page-numbers {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.oss-page-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--oss-ink);
+    background: #fff;
+    border: 1px solid var(--oss-line);
+    box-shadow: var(--oss-shadow-sm);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+a.oss-page-num:hover {
+    transform: translateY(-2px);
+    color: #fff;
+    border-color: transparent;
+    background: var(--oss-grad-brand);
+    box-shadow: 0 12px 26px rgba(255, 26, 117, 0.26);
+}
+
+.oss-page-num.is-current {
+    color: #fff;
+    border-color: transparent;
+    background: var(--oss-grad-brand);
+    box-shadow: 0 12px 26px rgba(255, 26, 117, 0.3);
+    cursor: default;
+}
+
+.oss-page-dots {
+    padding: 0 2px;
+    font-size: 1.5rem;
+    color: var(--oss-ink-2);
+}
+
+.oss-page-status {
+    flex-basis: 100%;
+    margin-top: 4px;
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--oss-ink-2);
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+    .oss-pagination {
+        gap: 10px;
+    }
+    .oss-page-btn {
+        padding: 10px 16px;
+        font-size: 1.4rem;
+    }
+    .oss-page-num {
+        min-width: 38px;
+        height: 38px;
+        padding: 0 9px;
+        font-size: 1.4rem;
+    }
+    .oss-page-status {
+        order: 10;
+        min-width: 0;
+    }
+}
+
+/* keep Ghost's built-in nav hidden (we render our own) */
+.pagination {
+    display: none !important;
+}

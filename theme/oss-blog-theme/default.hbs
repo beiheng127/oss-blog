@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{@site.locale}}"{{#match @custom.color_scheme "Dark"}} class="dark-mode"{{else match @custom.color_scheme "Auto"}} class="auto-color"{{/match}}>
+{{!-- no-infinite-scroll: 关闭 Casper 的无限滚动，改用 partials/pagination.hbs 的分页按钮 --}}
+<html lang="{{@site.locale}}" class="no-infinite-scroll{{#match @custom.color_scheme "Dark"}} dark-mode{{else match @custom.color_scheme "Auto"}} auto-color{{/match}}">
 <head>
 
     {{!-- Basic meta - advanced meta is output with {ghost_head} below --}}
@@ -19,6 +20,9 @@
 
     {{!-- Custom OSS Blog styles: refined cards, reading-time badges, related-posts panel --}}
     <link rel="stylesheet" type="text/css" href="{{asset "built/oss-blog.css"}}" />
+
+    {{!-- OSS Blog design polish: gradient header, tag-card backgrounds, premium palette (no build step) --}}
+    <link rel="stylesheet" type="text/css" href="{{asset "css/oss-design.css"}}" />
 
     {{!-- Custom OSS Blog enhancements: copy button on code blocks, back-to-top button --}}
     <link rel="stylesheet" type="text/css" href="{{asset "css/oss-enhance.css"}}" />
