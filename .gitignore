@@ -43,3 +43,8 @@ exports/
 
 # generated static snapshot (GitHub Pages)
 /static-site/
+
+# ---- Local verification screenshots & scratch (do not commit) ----
+/shot-*.png
+*.clipboard-*.png
+/*.简历项目说明.md

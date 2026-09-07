@@ -338,6 +338,30 @@ node runtime/seed-posts.js --dry     # 只转换不写库，预览
 
 > 横卡只在列表 feed 生效；文章详情页顶部大图、相关推荐面板（720px 网格）逻辑不变。
 
+### 3.16 阅读时长（reading-time）模块 ★自主功能
+
+> 背景：首页把阅读时间做成固定海报位，但读者反馈"怎么看都是 4 分钟"——因为 Ghost 内置 `@tryghost/helpers` 默认按 **275 wpm** 估算（偏慢，中文阅读实际 350–500 wpm），造成相近长度的文章都落在同一个整数分钟上，观感像"没实现/写死"。
+
+处理：把"阅读时长"做成三层、可独立校验的功能，而不是只依赖 Ghost 内置 helper——
+
+1. **独立模块** `runtime/scripts/oss-reading-time.js`
+   - 纯函数 `computeReadingMinutes(html, featureImage, {wpm})`，可单测；
+   - **中文友好**：默认 `wpm = 400`（可用 `--wpm=350` 覆盖），CJK 汉字逐字计、英文按词；
+   - 计入图片时间（首图 12s、递减、≥3s）与重读块（h1-h6 / blockquote / pre / code 各 +6s）；
+   - CLI：`node runtime/scripts/oss-reading-time.js`（校准并写出 cache）/ `--dry`（只看不写）/ `--wpm=350`。
+2. **后端 helper override** `runtime/versions/6.59.0/core/frontend/helpers/reading_time.js`
+   - 优先读 `runtime/reading-time-cache.json`（key = post.slug，value = 分钟数）；
+   - 命中直接按分钟数 + 翻译模板输出；未命中回退 Ghost 默认计算；
+   - 首次加载时把 cache **镜像**一份到 `content/themes/<激活主题>/assets/reading-time-cache.json`。
+3. **客户端实时计算 + 阅读进度条** `theme/oss-blog-theme/assets/js/oss-reading-time.js`
+   - 文章页对正文（去除 code/pre/blockquote）用同一公式现场算 minutes；
+   - 右下角 `oss-reading-badge-widget`：进度条 + 百分比 + 剩余时间（如"剩余约 3 分钟"），滑到底显示"✓ 已读完"；
+   - 与 `default.hbs` 顶部那条彩虹预览进度条（`oss-reading-progress`）互补：一条是顶部总进度，一条是右下角"时长 + 剩余"。
+
+效果（`node runtime/scripts/oss-reading-time.js --dry`）：25 篇文章分布为 8 / 5 / 4 / 3 / 1 分钟，长文（GPT-6）8 分钟、短文 1 分钟，不再"一律 4 分钟"。
+
+> 这套是**在 Ghost 提供的 `reading_time` helper 之上做了覆盖与增强**，不是重写——上游升级只需重跑一次 `runtime/scripts/oss-reading-time.js` 重新生成 cache 即可跟上。
+
 ### 改动文件清单
 
 | 文件 | 改动类型 |
@@ -361,6 +385,12 @@ node runtime/seed-posts.js --dry     # 只转换不写库，预览
 | `content/posts/*.md` | **新增**：16 篇 Markdown 文章源（秋招 / 前端 / AI / Agent / GPT-6） |
 | **数据库** `posts` 表 | 新增 16 篇 + 标签映射修复；`UPDATE posts SET comment_id = id WHERE comment_id IS NULL` 修评论区 |
 | **数据库** `settings.navigation` | 修改：About 后追加「标签」导航项 |
+| `partials/post-card-v.hbs` | **新增**：竖/横两用文章卡（compact、可被随机提升为 featured 横卡）；`post-card-featured.hbs` / `post-card-h.hbs` 已废弃删除 |
+| `assets/js/oss-home.js` | **新增**：每页随机挑一篇做横排 featured（Ghost 只加载内置 helper，故用客户端 JS 实现，主题层单文件） |
+| `assets/js/oss-reading-time.js` | **新增**：客户端实时阅读时长计算 + 右下角阅读进度条 widget（进度 / 百分比 / 剩余时间） |
+| `runtime/scripts/oss-reading-time.js` | **新增**：独立 reading-time 模块（可单测、`--dry` 预览、`--wpm` 覆盖），中文友好 400 wpm + 图片/重读块加成 |
+| `runtime/reading-time-cache.json` | **新增**：`{{reading_time}}` helper 读取的 slug→分钟 缓存（由上面脚本生成） |
+| `runtime/versions/6.59.0/core/frontend/helpers/reading_time.js` | 修改：**覆盖** Ghost 内置 helper，优先读 cache，未命中回退默认计算；并镜像 cache 至激活主题 assets |
 
 ---
 

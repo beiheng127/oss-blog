@@ -1,0 +1,60 @@
+{{!-- OSS Blog: unified post card.
+Rendered for EVERY post on index/tag/author feeds. By default it's a COMPACT
+vertical card (image on top, text below) modelled on the author's own blog (boke).
+After load, oss-home.js randomly promotes ONE card per page to `.is-featured`,
+which flips it to a horizontal editorial card (image left, text right) via CSS —
+so no two refreshes look identical and the page isn't dominated by a huge first block.
+
+The media block carries `tag-<slug>` so the placeholder gradient can vary by tag
+(see oss-design.css), avoiding a wall of identical gradient tiles. --}}
+
+<article class="post-card oss-card-v {{post_class}}">
+
+    <a class="oss-card-v-media{{#primary_tag}} tag-{{slug}}{{/primary_tag}}" href="{{url}}" aria-label="{{title}}">
+        {{#if feature_image}}
+            <img class="oss-card-v-img"
+                srcset="{{img_url feature_image size="s"}} 300w,
+                        {{img_url feature_image size="m"}} 600w,
+                        {{img_url feature_image size="l"}} 1000w,
+                        {{img_url feature_image size="xl"}} 2000w"
+                sizes="(max-width: 1000px) 50vw, 540px"
+                src="{{img_url feature_image size="m"}}"
+                alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                loading="lazy"
+            />
+            {{#primary_tag}}
+                <span class="oss-card-v-tag">{{name}}</span>
+            {{/primary_tag}}
+        {{else}}
+            <span class="oss-card-v-empty">
+                <span class="oss-card-v-empty-glyph">✦</span>
+                {{#primary_tag}}
+                    <span class="oss-card-v-empty-tag">{{name}}</span>
+                {{/primary_tag}}
+            </span>
+        {{/if}}
+    </a>
+
+    <div class="oss-card-v-body">
+
+        <h2 class="oss-card-v-title">
+            <a href="{{url}}">{{title}}</a>
+        </h2>
+
+        {{#if excerpt}}
+            <p class="oss-card-v-excerpt">{{excerpt}}</p>
+        {{/if}}
+
+        <footer class="post-card-meta oss-card-v-meta">
+            {{#primary_author}}
+                <span class="oss-card-v-author">{{name}}</span>
+            {{/primary_author}}
+            <time class="oss-card-v-date" datetime="{{date format="YYYY-MM-DD"}}">{{date format="DD MMM YYYY"}}</time>
+            {{#if reading_time}}
+                <span class="oss-card-v-length">{{reading_time minute=(t "1 min read") minutes=(t "% min read")}}</span>
+            {{/if}}
+        </footer>
+
+    </div>
+
+</article>

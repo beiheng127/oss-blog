@@ -105,10 +105,9 @@
         {{#author}}<h2>{{t "Articles by"}} {{name}}</h2>{{/author}}
     </div>
 
-    <div class="post-feed">
+    <div class="post-feed oss-feed">
         {{#foreach posts}}
-            {{!-- OSS Blog: horizontal card (left image / right text) --}}
-            {{> "post-card-h"}}
+            {{> "post-card-v"}}
         {{/foreach}}
     </div>
 

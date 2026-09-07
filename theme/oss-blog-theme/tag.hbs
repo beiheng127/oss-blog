@@ -3,15 +3,13 @@
 
 <main id="site-main" class="site-main outer">
 <div class="inner posts">
-    <div class="post-feed">
+    <div class="post-feed oss-feed">
 
         {{#tag}}
-        <section class="post-card post-card-large">
+        <section class="post-card oss-tag-hero">
 
             {{#if feature_image}}
             <div class="post-card-image-link">
-                {{!-- This is a responsive image, it loads different sizes depending on device
-                https://medium.freecodecamp.org/a-guide-to-responsive-images-with-ready-to-use-templates-c400bd65c433 --}}
                 <img class="post-card-image"
                     srcset="{{img_url feature_image size="s"}} 300w,
                             {{img_url feature_image size="m"}} 600w,
@@ -43,8 +41,7 @@
         {{/tag}}
 
         {{#foreach posts}}
-            {{!-- OSS Blog: horizontal card (left image / right text) --}}
-            {{> "post-card-h"}}
+            {{> "post-card-v"}}
         {{/foreach}}
 
     </div>
