@@ -42,21 +42,22 @@
 .site-header-content {
     text-align: center;
     /* 顶部留出 absolute 导航栏高度(88px)，标题尽量上移、少留 margin */
-    padding: calc(88px + 2vmin) 4vmin 3vmin;
+    padding: calc(88px + 3vmin) 4vmin 3vmin;
 }
 
-/* 封面图铺满整个容器并 cover 裁切（不按原比例撑高、不留白） */
+/* 封面图从导航栏下沿(88px)开始铺到容器底，cover 居中裁切，不被导航栏遮住头部 */
 .has-cover .site-header-content {
-    min-height: 440px;
+    min-height: 540px;
 }
 .site-header-cover {
-    top: 0;
+    top: 88px;
     right: 0;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: cover;
+    object-position: center center;
 }
 
 .oss-hero-title {
