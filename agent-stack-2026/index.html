@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh" class="no-infinite-scroll">
+<head>
+<base href="/oss-blog/">
+
+    <title>2026 年的 Agent 技术栈，以及单智能体为什么还打得过多智能体</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" as="style" href="/assets/built/screen.css?v=9n2338ulqJzWtISb" />
+    <link rel="preload" as="script" href="/assets/built/casper.js?v=P31E7MBl4qW96wZr" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css?v=9n2338ulqJzWtISb" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/oss-blog.css?v=Z1Ts3hRwZy4fmbtC" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/oss-design.css?v=Z11sArkJGs8FGXO2" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/oss-enhance.css?v=_4MbR_DX8AdIrnWQ" />
+
+    <meta name="description" content="框架战争结束了，控制流就是代码。真正分层的是模型、工具、编排、沙箱、护栏这五层。">
+    <link rel="icon" href="/content/images/size/w256h256/format/png/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-1.webp" type="image/png">
+    <link rel="canonical" href="/agent-stack-2026/">
+    <link rel="alternate" type="text/markdown" href="/agent-stack-2026.md">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+    <meta property="og:site_name" content="北恒的博客">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="2026 年的 Agent 技术栈，以及单智能体为什么还打得过多智能体">
+    <meta property="og:description" content="框架战争结束了，控制流就是代码。真正分层的是模型、工具、编排、沙箱、护栏这五层。">
+    <meta property="og:url" content="/agent-stack-2026/">
+    <meta property="og:image" content="https://static.ghost.org/v5.0.0/images/publication-cover.jpg">
+    <meta property="article:published_time" content="2026-09-07T11:40:00.000Z">
+    <meta property="article:modified_time" content="2026-09-07T03:49:39.000Z">
+    <meta property="article:tag" content="Agent">
+    <meta property="article:tag" content="AI">
+    
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="2026 年的 Agent 技术栈，以及单智能体为什么还打得过多智能体">
+    <meta name="twitter:description" content="框架战争结束了，控制流就是代码。真正分层的是模型、工具、编排、沙箱、护栏这五层。">
+    <meta name="twitter:url" content="/agent-stack-2026/">
+    <meta name="twitter:image" content="https://static.ghost.org/v5.0.0/images/publication-cover.jpg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="李亚恒">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Agent, AI">
+    <meta name="twitter:site" content="@ghost">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="840">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "北恒的博客",
+        "url": "/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ.webp",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "李亚恒",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-2.webp",
+            "width": 360,
+            "height": 360
+        },
+        "url": "/author/li-yaheng/",
+        "sameAs": [
+            "https://github.com/beiheng127"
+        ]
+    },
+    "headline": "2026 年的 Agent 技术栈，以及单智能体为什么还打得过多智能体",
+    "url": "/agent-stack-2026/",
+    "datePublished": "2026-09-07T11:40:00.000Z",
+    "dateModified": "2026-09-07T03:49:39.000Z",
+    "keywords": "Agent, AI",
+    "description": "框架战争结束了，控制流就是代码。真正分层的是模型、工具、编排、沙箱、护栏这五层。",
+    "mainEntityOfPage": "/agent-stack-2026/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 6.59">
+    <link rel="alternate" type="application/rss+xml" title="北恒的博客" href="/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.69/umd/portal.min.js" data-i18n="true" data-ghost="/" data-key="f24c2e077bd9fe405aadc922ab" data-api="/ghost/api/content/" data-locale="zh" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/sodo-search.min.js" data-key="f24c2e077bd9fe405aadc922ab" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/main.css" data-sodo-search="/" data-locale="zh" crossorigin="anonymous"></script>
+    
+    <link href="/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=ShRHxgy4po8zN-Wf"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=Jw0334E-A8vpuWdm">
+    <script defer src="/public/comment-counts.min.js?v=oFYkaGLdiMqB8VN9" data-ghost-comments-counts-api="/members/api/comments/counts/"></script>
+    <script defer src="/public/member-attribution.min.js?v=fGWxp7cZ6mmurhvN"></script><style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+</head>
+<body class="post-template tag-agent tag-ai is-head-middle-logo has-cover">
+<div class="oss-reading-progress" aria-hidden="true"><span class="oss-reading-progress-bar" id="oss-reading-progress-bar"></span></div>
+<div class="viewport">
+
+    <header id="gh-head" class="gh-head outer">
+        <div class="gh-head-inner inner">
+            <div class="gh-head-brand">
+                <a class="gh-head-logo" href="">
+                        <img src="/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ.webp" alt="北恒的博客">
+                </a>
+                <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                <button class="gh-burger" aria-label="Main Menu"></button>
+            </div>
+
+            <nav class="gh-head-menu">
+                <ul class="nav">
+    <li class="nav-home"><a href="/">Home</a></li>
+    <li class="nav-about"><a href="/about/">About</a></li>
+    <li class="nav-tags"><a href="/tags/">tags</a></li>
+</ul>
+
+            </nav>
+
+            <div class="gh-head-actions">
+                    <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                    <div class="gh-head-members">
+                                <a class="gh-head-link" href="#/portal/signin" data-portal="signin">登录</a>
+                                <a class="gh-head-button" href="#/portal/signup" data-portal="signup">订阅</a>
+                    </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="site-content">
+        
+
+
+
+<main id="site-main" class="site-main">
+<article class="article post tag-agent tag-ai no-image image-full">
+
+    <header class="article-header gh-canvas">
+
+        <div class="article-tag post-card-tags">
+                <span class="post-card-primary-tag">
+                    <a href="/tag/agent/">Agent</a>
+                </span>
+        </div>
+
+        <h1 class="article-title">2026 年的 Agent 技术栈，以及单智能体为什么还打得过多智能体</h1>
+
+            <p class="article-excerpt">框架战争结束了，控制流就是代码。真正分层的是模型、工具、编排、沙箱、护栏这五层。</p>
+
+        <div class="article-byline">
+        <section class="article-byline-content">
+
+            <ul class="author-list instapaper_ignore">
+                <li class="author-list-item">
+                    <a href="/author/li-yaheng/" class="author-avatar" aria-label="Read more of 李亚恒">
+                        <img class="author-profile-image" src="/content/images/size/w100/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-2.webp" alt="李亚恒" loading="eager" />
+                    </a>
+                </li>
+            </ul>
+
+            <div class="article-byline-meta">
+                <h4 class="author-name"><a href="/author/li-yaheng/">李亚恒</a></h4>
+                <div class="byline-meta-content">
+                    <time class="byline-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                        <span class="byline-reading-time"><span class="bull">&bull;</span> 阅读时间 4 分钟</span>
+                </div>
+            </div>
+
+        </section>
+        <a href="#/share" class="gh-button gh-button-share">分享</a>
+        </div>
+
+        <div class="oss-post-meta">
+            <div class="oss-post-tags">
+                    <a href="/tag/agent/" class="oss-post-tag">Agent</a>
+                    <a href="/tag/ai/" class="oss-post-tag">AI</a>
+            </div>
+        </div>
+
+
+    </header>
+
+    <section class="gh-content gh-canvas">
+        <h2>五层栈</h2>
+<p>看了一圈今年的生产实践，Agent 的技术栈基本收敛成五层了：</p>
+<p><strong>第一层：模型</strong></p>
+<p>选型标准不再是跑分，而是<strong>长任务下的工具调用可靠性</strong>。同一个模型，单轮问答的水平差异不大，但连续调用十次工具、中间还要纠错的能力，差距非常明显。</p>
+<p>实用的评估方法是：拿你自己的工具 schema 和真实的多步任务去测，别看公开的榜单。</p>
+<p><strong>第二层：工具与 MCP</strong></p>
+<p>Model Context Protocol 基本赢了连接器这一战——各家都在支持，生态起来了。</p>
+<p>但今年大家学到的教训是：<strong>连接器既是攻击面，也是治理面</strong>。作用域受限的 API key、按工作空间划分的连接器白名单、工具调用的审计日志，这些已经从&quot;企业级加分项&quot;变成了基线要求。</p>
+<p><strong>第三层：编排</strong></p>
+<p>市场分成了三种形态：</p>
+<ul>
+<li>厂商原生平台（云厂商把 Agent 塞进自己的产品线）</li>
+<li>云上 Agent 运行时（托管执行 + 内置策略）</li>
+<li><strong>代码优先的编排</strong>（自己写确定性控制流，在决策点调用模型）</li>
+</ul>
+<p>有意思的是第三种在严肃的生产部署里占了主导。原因是：Agent 负责判断，代码负责结构。确定性部分交给代码，模型只处理真正需要灵活性的环节，系统的可预测性会好很多。</p>
+<p>2024—2025 年那场框架战争，到今年的结论是一句耸肩：<strong>控制流就是代码</strong>。</p>
+<p><strong>第四层：执行环境</strong></p>
+<p>这是今年才独立出来的一层。Agent 要跑代码、要浏览网页，就得有个隔离的地方跑。沙箱化执行变成了可以按需租用的基础设施。</p>
+<p>一句话原则：只要你的 Agent 会执行代码或访问网络，隔离执行就不是可选项。</p>
+<p><strong>第五层：护栏与评估</strong></p>
+<p>区分 demo 和生产的一层。</p>
+<p>现在的标准已经从&quot;输入输出过滤&quot;升级到<strong>动作级别的筛查</strong>——每个 Agent 动作都要评估是否存在提示注入、有害内容、敏感数据外泄。</p>
+<p>配套的是：真实任务分布上的回归评估集、有明确负责人的抽样人工复核、按用例的紧急开关。建议把运行成本的 10%—20% 预算放在这一层。</p>
+<h2>搭建顺序：从第五层往上</h2>
+<p>给新团队的建议很反直觉：<strong>先做评估，再选模型，再接少量工具，再写编排，最后才上沙箱</strong>。</p>
+<p>从顶层（编排器）开始建的团队，交付的是 demo；从底层（评估）开始建的团队，交付的是系统。</p>
+<h2>单智能体 vs 多智能体</h2>
+<p>这是今年最有争议的话题，数据也最打脸。</p>
+<p>有研究给出的结论是：在给相同工具和上下文的情况下，<strong>单个 Agent 在 64% 的基准任务上达到或超过了多智能体系统</strong>，而多智能体平均只带来约 2.1 个百分点的准确率提升，成本却接近翻倍。</p>
+<p>原因不难理解。多智能体的协调是有税金的：任务要拆解、结果要同步、上下文要传递、冲突要仲裁。另一组数据说，辩论式多智能体的成本约为单次模型调用的 2.5 倍。</p>
+<p>所以现在的共识打法是：<strong>先用单智能体，直到你看到一个清晰的边界——某个子任务确实不该由同一个 Agent 跨越</strong>，再拆。</p>
+<p>该拆的典型场景：跨域的复杂工作（比如一个任务需要同时写代码、查法务条款、做数据分析，且三者的上下文几乎不重叠）。</p>
+<h2>还有一条主线：记忆</h2>
+<p>长期记忆正在成为 Agent 的差异化能力，而且已经超出了&quot;向量库存历史&quot;的范畴。分类在硬化：</p>
+<ul>
+<li><strong>语义记忆</strong>：知道什么（事实、偏好）</li>
+<li><strong>情景记忆</strong>：发生过什么（事件、轨迹）</li>
+<li><strong>程序性记忆</strong>：怎么做（流程、技能）</li>
+</ul>
+<p>今年一篇被反复引用的观点是：Agent 变聪明不是靠存得更多，而是靠<strong>把存的东西整理压缩</strong>。</p>
+<p>对应到工程上，checkpointer（单会话）和 memory store（跨会话）要分开设计，同时&quot;记忆卫生&quot;——该忘什么、什么时候压缩、怎么防止上下文污染——跟存储层本身一样重要。</p>
+<h2>我的收获</h2>
+<p>作为一个还在学校的开发者，这一年的信息密度大得有点窒息。但理清之后反而踏实了：框架会一直换，这五层不会；模型会一直升级，评估、沙箱、护栏这三件事不会过时。</p>
+<p>把时间花在不容易过期的东西上，是我在 2026 年最确定的一个判断。</p>
+
+    </section>
+
+        <section class="article-comments gh-canvas">
+            
+        <script defer src="https://cdn.jsdelivr.net/ghost/comments-ui@~1.6/umd/comments-ui.min.js" data-locale="zh" data-ghost-comments="/" data-api="/ghost/api/content/" data-admin="/ghost/" data-key="f24c2e077bd9fe405aadc922ab" data-title="null" data-count="true" data-post-id="a0cba9db72f1fa7a69d2e724" data-color-scheme="auto" data-avatar-saturation="60" data-accent-color="#FF1A75" data-comments-enabled="all" data-publication="北恒的博客" crossorigin="anonymous"></script>
+    
+        </section>
+
+</article>
+</main>
+
+
+
+
+            <aside class="oss-related-wrap outer">
+                <div class="oss-related inner">
+                    <div class="oss-related-heading">
+                        <h2 class="oss-related-title">相关推荐</h2>
+                        <span class="oss-related-tag">#</span>
+                    </div>
+
+                        <div class="oss-related-grid">
+                                
+<article class="post-card post tag-agent tag-ai no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/rag-is-not-just-vector-db/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">Agent</span>
+                </div>
+                <h2 class="post-card-title">
+                    RAG 不是把文档塞进向量库
+                </h2>
+            </header>
+                <div class="post-card-excerpt">链路有六段，向量化只是其中一段。大多数效果问题，出在前面两步。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 4 分钟</span>
+                <script
+    data-ghost-comment-count="ca977ca19d60df22093437fd"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                                
+<article class="post-card post tag-agent tag-open-source no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/aether-desk-retro/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">Agent</span>
+                </div>
+                <h2 class="post-card-title">
+                    手搓一个知识工作台 Agent：aether-desk 复盘
+                </h2>
+            </header>
+                <div class="post-card-excerpt">会话持久化、真 Tool Calling、混合 RAG、引用角标、人在环、Generative UI——六个决策背后的取舍。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 5 分钟</span>
+                <script
+    data-ghost-comment-count="128cbe3a51a699512992f13f"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                                
+<article class="post-card post tag-agent tag-ai no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/ai-agent-fundamentals/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">Agent</span>
+                </div>
+                <h2 class="post-card-title">
+                    AI Agent 到底是个啥：从一次对话到一个能干活的东西
+                </h2>
+            </header>
+                <div class="post-card-excerpt">大模型是脑子，Agent 是给它接上手脚和工具箱。理解这一点，比记住十个框架名字有用。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 4 分钟</span>
+                <script
+    data-ghost-comment-count="926b5529fc3f6f8ded050eac"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                        </div>
+                </div>
+            </aside>
+
+
+
+    </div>
+
+    <footer class="site-footer outer">
+        <div class="inner">
+            <section class="copyright"><a href="">北恒的博客</a> &copy; 2026</section>
+            <div class="site-footer-center">
+                <div class="site-footer-social-links">
+                        <a href="https://x.com/ghost" target="_blank" rel="noopener" aria-label="X">
+<svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18.2439 2.25H21.5519L14.3249 10.51L22.8269 21.75H16.1699L10.9559 14.933L4.98991 21.75H1.67991L9.40991 12.915L1.25391 2.25H8.07991L12.7929 8.481L18.2439 2.25ZM17.0829 19.77H18.9159L7.08391 4.126H5.11691L17.0829 19.77Z" fill="currentColor"/>
+</svg>                        </a>
+                        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M23.9981 11.9991C23.9981 5.37216 18.626 0 11.9991 0C5.37216 0 0 5.37216 0 11.9991C0 17.9882 4.38789 22.9522 10.1242 23.8524V15.4676H7.07758V11.9991H10.1242V9.35553C10.1242 6.34826 11.9156 4.68714 14.6564 4.68714C15.9692 4.68714 17.3424 4.92149 17.3424 4.92149V7.87439H15.8294C14.3388 7.87439 13.8739 8.79933 13.8739 9.74824V11.9991H17.2018L16.6698 15.4676H13.8739V23.8524C19.6103 22.9522 23.9981 17.9882 23.9981 11.9991Z"/></svg>                        </a>
+                </div>
+                <nav class="site-footer-nav">
+                    <ul class="nav">
+    <li class="nav-sign-up"><a href="#/portal/">Sign up</a></li>
+</ul>
+
+                </nav>
+            </div>
+            <div class="gh-powered-by"><a href="https://ghost.org/" target="_blank" rel="noopener">Powered by Ghost</a> <span class="oss-theme-credit">· Theme: OSS Blog (fork of Casper)</span></div>
+        </div>
+    </footer>
+
+</div>
+
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/built/casper.js?v=P31E7MBl4qW96wZr" defer></script>
+
+<script src="/assets/js/oss-enhance.js?v=0O2UTWVb-pLD67eo" defer></script>
+
+<script>
+(function () {
+    var bar = document.getElementById('oss-reading-progress-bar');
+    if (!bar) { return; }
+    function update() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - window.innerHeight;
+        var pct = height > 0 ? Math.min(100, Math.max(0, (scrollTop / height) * 100)) : 0;
+        /* scaleX from the left keeps the rainbow gradient undistorted as it grows */
+        bar.style.transform = 'scaleX(' + (pct / 100) + ')';
+    }
+    window.addEventListener('scroll', update, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+})();
+</script>
+
+
+
+</body>
+</html>

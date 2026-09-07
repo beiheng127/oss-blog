@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh" class="no-infinite-scroll">
+<head>
+<base href="/oss-blog/">
+
+    <title>2026 AI 行业观察：从模型竞赛到 Agent 基础设施</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" as="style" href="/assets/built/screen.css?v=9n2338ulqJzWtISb" />
+    <link rel="preload" as="script" href="/assets/built/casper.js?v=P31E7MBl4qW96wZr" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css?v=9n2338ulqJzWtISb" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/oss-blog.css?v=Z1Ts3hRwZy4fmbtC" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/oss-design.css?v=Z11sArkJGs8FGXO2" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/oss-enhance.css?v=_4MbR_DX8AdIrnWQ" />
+
+    <meta name="description" content="热度还在，但钱开始流向不一样的地方了。今年真正的关键词是&quot;落地&quot;和&quot;治理&quot;。">
+    <link rel="icon" href="/content/images/size/w256h256/format/png/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-1.webp" type="image/png">
+    <link rel="canonical" href="/ai-industry-observation-2026/">
+    <link rel="alternate" type="text/markdown" href="/ai-industry-observation-2026.md">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+    <meta property="og:site_name" content="北恒的博客">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="2026 AI 行业观察：从模型竞赛到 Agent 基础设施">
+    <meta property="og:description" content="热度还在，但钱开始流向不一样的地方了。今年真正的关键词是&quot;落地&quot;和&quot;治理&quot;。">
+    <meta property="og:url" content="/ai-industry-observation-2026/">
+    <meta property="og:image" content="https://static.ghost.org/v5.0.0/images/publication-cover.jpg">
+    <meta property="article:published_time" content="2026-09-07T12:00:00.000Z">
+    <meta property="article:modified_time" content="2026-09-07T03:49:39.000Z">
+    <meta property="article:tag" content="AI">
+    <meta property="article:tag" content="News">
+    
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="2026 AI 行业观察：从模型竞赛到 Agent 基础设施">
+    <meta name="twitter:description" content="热度还在，但钱开始流向不一样的地方了。今年真正的关键词是&quot;落地&quot;和&quot;治理&quot;。">
+    <meta name="twitter:url" content="/ai-industry-observation-2026/">
+    <meta name="twitter:image" content="https://static.ghost.org/v5.0.0/images/publication-cover.jpg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="李亚恒">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="AI, News">
+    <meta name="twitter:site" content="@ghost">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="840">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "北恒的博客",
+        "url": "/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ.webp",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "李亚恒",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-2.webp",
+            "width": 360,
+            "height": 360
+        },
+        "url": "/author/li-yaheng/",
+        "sameAs": [
+            "https://github.com/beiheng127"
+        ]
+    },
+    "headline": "2026 AI 行业观察：从模型竞赛到 Agent 基础设施",
+    "url": "/ai-industry-observation-2026/",
+    "datePublished": "2026-09-07T12:00:00.000Z",
+    "dateModified": "2026-09-07T03:49:39.000Z",
+    "keywords": "AI, News",
+    "description": "热度还在，但钱开始流向不一样的地方了。今年真正的关键词是\"落地\"和\"治理\"。",
+    "mainEntityOfPage": "/ai-industry-observation-2026/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 6.59">
+    <link rel="alternate" type="application/rss+xml" title="北恒的博客" href="/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.69/umd/portal.min.js" data-i18n="true" data-ghost="/" data-key="f24c2e077bd9fe405aadc922ab" data-api="/ghost/api/content/" data-locale="zh" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/sodo-search.min.js" data-key="f24c2e077bd9fe405aadc922ab" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/main.css" data-sodo-search="/" data-locale="zh" crossorigin="anonymous"></script>
+    
+    <link href="/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=ShRHxgy4po8zN-Wf"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=Jw0334E-A8vpuWdm">
+    <script defer src="/public/comment-counts.min.js?v=oFYkaGLdiMqB8VN9" data-ghost-comments-counts-api="/members/api/comments/counts/"></script>
+    <script defer src="/public/member-attribution.min.js?v=fGWxp7cZ6mmurhvN"></script><style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+</head>
+<body class="post-template tag-ai tag-news is-head-middle-logo has-cover">
+<div class="oss-reading-progress" aria-hidden="true"><span class="oss-reading-progress-bar" id="oss-reading-progress-bar"></span></div>
+<div class="viewport">
+
+    <header id="gh-head" class="gh-head outer">
+        <div class="gh-head-inner inner">
+            <div class="gh-head-brand">
+                <a class="gh-head-logo" href="">
+                        <img src="/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ.webp" alt="北恒的博客">
+                </a>
+                <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                <button class="gh-burger" aria-label="Main Menu"></button>
+            </div>
+
+            <nav class="gh-head-menu">
+                <ul class="nav">
+    <li class="nav-home"><a href="/">Home</a></li>
+    <li class="nav-about"><a href="/about/">About</a></li>
+    <li class="nav-tags"><a href="/tags/">tags</a></li>
+</ul>
+
+            </nav>
+
+            <div class="gh-head-actions">
+                    <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                    <div class="gh-head-members">
+                                <a class="gh-head-link" href="#/portal/signin" data-portal="signin">登录</a>
+                                <a class="gh-head-button" href="#/portal/signup" data-portal="signup">订阅</a>
+                    </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="site-content">
+        
+
+
+
+<main id="site-main" class="site-main">
+<article class="article post tag-ai tag-news no-image image-full">
+
+    <header class="article-header gh-canvas">
+
+        <div class="article-tag post-card-tags">
+                <span class="post-card-primary-tag">
+                    <a href="/tag/ai/">AI</a>
+                </span>
+        </div>
+
+        <h1 class="article-title">2026 AI 行业观察：从模型竞赛到 Agent 基础设施</h1>
+
+            <p class="article-excerpt">热度还在，但钱开始流向不一样的地方了。今年真正的关键词是&quot;落地&quot;和&quot;治理&quot;。</p>
+
+        <div class="article-byline">
+        <section class="article-byline-content">
+
+            <ul class="author-list instapaper_ignore">
+                <li class="author-list-item">
+                    <a href="/author/li-yaheng/" class="author-avatar" aria-label="Read more of 李亚恒">
+                        <img class="author-profile-image" src="/content/images/size/w100/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-2.webp" alt="李亚恒" loading="eager" />
+                    </a>
+                </li>
+            </ul>
+
+            <div class="article-byline-meta">
+                <h4 class="author-name"><a href="/author/li-yaheng/">李亚恒</a></h4>
+                <div class="byline-meta-content">
+                    <time class="byline-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                        <span class="byline-reading-time"><span class="bull">&bull;</span> 阅读时间 4 分钟</span>
+                </div>
+            </div>
+
+        </section>
+        <a href="#/share" class="gh-button gh-button-share">分享</a>
+        </div>
+
+        <div class="oss-post-meta">
+            <div class="oss-post-tags">
+                    <a href="/tag/ai/" class="oss-post-tag">AI</a>
+                    <a href="/tag/news/" class="oss-post-tag">News</a>
+            </div>
+        </div>
+
+
+    </header>
+
+    <section class="gh-content gh-canvas">
+        <h2>从&quot;谁的分数高&quot;到&quot;谁能跑起来&quot;</h2>
+<p>前两年的行业话题基本围绕模型本身：参数、榜单、上下文长度。今年明显不一样了，讨论的重心挪到了两个字——落地。</p>
+<p>企业侧的现状很能说明问题。大量组织的 AI 应用成熟度还停留在 L1（探索试验）和 L2（局部赋能）阶段，真正跑在生产环境核心链路上的不多。有个说法我觉得很准：<strong>浅层繁荣、广而不深</strong>——很多项目看起来到处都在用 Agent，解决的主要是业务外围的问题，核心业务环节依然依赖人的 know-how。</p>
+<p>这不是唱衰。任何技术从狂热到务实都要经过这一段，2026 年恰好是转折点。</p>
+<h2>钱在往哪儿流</h2>
+<p>几个值得记的数字：</p>
+<ul>
+<li>中国企业级 AI 智能体市场，2025 年两百多亿的规模，2026 年预计翻倍</li>
+<li>智能体开发平台及应用这块的投资，未来几年的复合增长率被估到很高</li>
+<li>但另一面：有机构预测超过 40% 的 Agent 项目会在 2027 年底前被取消，理由是成本失控、价值不清、风险控制不足</li>
+</ul>
+<p>这两个数字并存才真实：市场在涨，同时大量项目会死。活下来的共同特征很明确——范围窄、有基线指标、有人工审批环节、有可观测性。</p>
+<h2>成本的形状变了</h2>
+<p>企业侧反馈的一个细节挺有意思：代码开发成本在下降，但数据、安全和 Token 的成本在上升。</p>
+<p>Token 尤其典型。问题已经不是&quot;单价太高&quot;，而是&quot;用量失控&quot;——Agent 在业务环境里持续运行，会不断产生 Token 消耗。单位价格在降，但任务量涨得更快。</p>
+<p>所以 Token 的精细化管理（缓存、裁剪、路由到更便宜的模型、限制循环次数）从优化项变成了必需项。这也是我在自己的项目里还没做好、但必须补的一课。</p>
+<h2>治理从&quot;以后再说&quot;变成了前置条件</h2>
+<p>今年企业级讨论里，安全被放的优先级非常高，甚至被描述为&quot;落地时必须同步推进的首要议题&quot;。</p>
+<p>风险被总结为三层：人对 AI 的失控、AI 自身的失控、AI 导致的数据泄露。听起来吓人，但落到工程上就是几件具体的事：</p>
+<ul>
+<li>数据权限分级，Agent 只能看到它该看的</li>
+<li>操作留痕可审计</li>
+<li>违规动作的拦截机制</li>
+<li>超出能力边界时主动触发人工兜底</li>
+</ul>
+<p>&quot;人在环&quot;这件事，我在 aether-desk 里做了一版，当时只是出于直觉，现在看倒是踩对了方向。</p>
+<h2>一个我认同的判断</h2>
+<p>有报告提出：可信赖的 Agent 需要四项基准能力——安全可控、专业可靠、能力可成长、价值可计量。</p>
+<p>前两项是门槛，后两项决定天花板。特别是&quot;能力可成长&quot;：企业的业务规则一直在变，Agent 如果不能随着运行不断吸收反馈、形成&quot;数据—知识—智能体&quot;的闭环，那它就永远是个一次性的项目，而不是资产。</p>
+<h2>对我这种普通开发者的意义</h2>
+<p>宏观数据看完，落到个人身上其实就三句话：</p>
+<ol>
+<li><strong>别只做 demo。</strong> 能演示和能上线之间隔着评估、护栏、成本管控三座山，这些才是稀缺能力。</li>
+<li><strong>往业务 know-how 靠。</strong> 通用 Agent 做不了专业场景，价值在于把领域知识工程化。懂业务的技术人会越来越值钱。</li>
+<li><strong>窗口期是有的，但不长。</strong> 现在这个阶段，会用 AI 的人还不多，愿意把它用到生产里的人更少。等所有人都熟练了，溢价就没了。</li>
+</ol>
+<p>我给自己估的时间是三年。三年之后，AI 工具会像 Git 一样是默认技能，不再是差异化优势。现在要做的，是在它还是差异化的时候，把该积累的积累够。</p>
+
+    </section>
+
+        <section class="article-comments gh-canvas">
+            
+        <script defer src="https://cdn.jsdelivr.net/ghost/comments-ui@~1.6/umd/comments-ui.min.js" data-locale="zh" data-ghost-comments="/" data-api="/ghost/api/content/" data-admin="/ghost/" data-key="f24c2e077bd9fe405aadc922ab" data-title="null" data-count="true" data-post-id="ef53f1cd01ea695ee1f65265" data-color-scheme="auto" data-avatar-saturation="60" data-accent-color="#FF1A75" data-comments-enabled="all" data-publication="北恒的博客" crossorigin="anonymous"></script>
+    
+        </section>
+
+</article>
+</main>
+
+
+
+
+            <aside class="oss-related-wrap outer">
+                <div class="oss-related inner">
+                    <div class="oss-related-heading">
+                        <h2 class="oss-related-title">相关推荐</h2>
+                        <span class="oss-related-tag">#</span>
+                    </div>
+
+                        <div class="oss-related-grid">
+                                
+<article class="post-card post tag-ai tag-life no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/how-i-actually-use-ai-tools/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">AI</span>
+                </div>
+                <h2 class="post-card-title">
+                    我实际在用 AI 干什么：一份不含滤镜的清单
+                </h2>
+            </header>
+                <div class="post-card-excerpt">好用的地方真好用，难用的地方也是真难用。写点实际的，不吹不踩。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 4 分钟</span>
+                <script
+    data-ghost-comment-count="dec6c614079f55b95dfb41ed"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                                
+<article class="post-card post tag-ai tag-tech no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/ai-and-programmer-jobs-2026/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">AI</span>
+                </div>
+                <h2 class="post-card-title">
+                    AI 不会让程序员失业，但会重新定义&quot;程序员&quot;
+                </h2>
+            </header>
+                <div class="post-card-excerpt">被替代的不是写代码的人，是不会用 AI 写代码的人。这话听着像口号，但数据是真的。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 4 分钟</span>
+                <script
+    data-ghost-comment-count="4b4e7e767f2e355bf9f89243"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                                
+<article class="post-card post tag-agent tag-ai no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/agent-stack-2026/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">Agent</span>
+                </div>
+                <h2 class="post-card-title">
+                    2026 年的 Agent 技术栈，以及单智能体为什么还打得过多智能体
+                </h2>
+            </header>
+                <div class="post-card-excerpt">框架战争结束了，控制流就是代码。真正分层的是模型、工具、编排、沙箱、护栏这五层。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 4 分钟</span>
+                <script
+    data-ghost-comment-count="a0cba9db72f1fa7a69d2e724"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                        </div>
+                </div>
+            </aside>
+
+
+
+    </div>
+
+    <footer class="site-footer outer">
+        <div class="inner">
+            <section class="copyright"><a href="">北恒的博客</a> &copy; 2026</section>
+            <div class="site-footer-center">
+                <div class="site-footer-social-links">
+                        <a href="https://x.com/ghost" target="_blank" rel="noopener" aria-label="X">
+<svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18.2439 2.25H21.5519L14.3249 10.51L22.8269 21.75H16.1699L10.9559 14.933L4.98991 21.75H1.67991L9.40991 12.915L1.25391 2.25H8.07991L12.7929 8.481L18.2439 2.25ZM17.0829 19.77H18.9159L7.08391 4.126H5.11691L17.0829 19.77Z" fill="currentColor"/>
+</svg>                        </a>
+                        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M23.9981 11.9991C23.9981 5.37216 18.626 0 11.9991 0C5.37216 0 0 5.37216 0 11.9991C0 17.9882 4.38789 22.9522 10.1242 23.8524V15.4676H7.07758V11.9991H10.1242V9.35553C10.1242 6.34826 11.9156 4.68714 14.6564 4.68714C15.9692 4.68714 17.3424 4.92149 17.3424 4.92149V7.87439H15.8294C14.3388 7.87439 13.8739 8.79933 13.8739 9.74824V11.9991H17.2018L16.6698 15.4676H13.8739V23.8524C19.6103 22.9522 23.9981 17.9882 23.9981 11.9991Z"/></svg>                        </a>
+                </div>
+                <nav class="site-footer-nav">
+                    <ul class="nav">
+    <li class="nav-sign-up"><a href="#/portal/">Sign up</a></li>
+</ul>
+
+                </nav>
+            </div>
+            <div class="gh-powered-by"><a href="https://ghost.org/" target="_blank" rel="noopener">Powered by Ghost</a> <span class="oss-theme-credit">· Theme: OSS Blog (fork of Casper)</span></div>
+        </div>
+    </footer>
+
+</div>
+
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/built/casper.js?v=P31E7MBl4qW96wZr" defer></script>
+
+<script src="/assets/js/oss-enhance.js?v=0O2UTWVb-pLD67eo" defer></script>
+
+<script>
+(function () {
+    var bar = document.getElementById('oss-reading-progress-bar');
+    if (!bar) { return; }
+    function update() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - window.innerHeight;
+        var pct = height > 0 ? Math.min(100, Math.max(0, (scrollTop / height) * 100)) : 0;
+        /* scaleX from the left keeps the rainbow gradient undistorted as it grows */
+        bar.style.transform = 'scaleX(' + (pct / 100) + ')';
+    }
+    window.addEventListener('scroll', update, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+})();
+</script>
+
+
+
+</body>
+</html>

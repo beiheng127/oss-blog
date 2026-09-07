@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh" class="no-infinite-scroll">
+<head>
+<base href="/oss-blog/">
+
+    <title>RAG 不是把文档塞进向量库</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" as="style" href="/assets/built/screen.css?v=9n2338ulqJzWtISb" />
+    <link rel="preload" as="script" href="/assets/built/casper.js?v=P31E7MBl4qW96wZr" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css?v=9n2338ulqJzWtISb" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/oss-blog.css?v=Z1Ts3hRwZy4fmbtC" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/oss-design.css?v=Z11sArkJGs8FGXO2" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/oss-enhance.css?v=_4MbR_DX8AdIrnWQ" />
+
+    <meta name="description" content="链路有六段，向量化只是其中一段。大多数效果问题，出在前面两步。">
+    <link rel="icon" href="/content/images/size/w256h256/format/png/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-1.webp" type="image/png">
+    <link rel="canonical" href="/rag-is-not-just-vector-db/">
+    <link rel="alternate" type="text/markdown" href="/rag-is-not-just-vector-db.md">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+    <meta property="og:site_name" content="北恒的博客">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="RAG 不是把文档塞进向量库">
+    <meta property="og:description" content="链路有六段，向量化只是其中一段。大多数效果问题，出在前面两步。">
+    <meta property="og:url" content="/rag-is-not-just-vector-db/">
+    <meta property="og:image" content="https://static.ghost.org/v5.0.0/images/publication-cover.jpg">
+    <meta property="article:published_time" content="2026-09-07T11:30:00.000Z">
+    <meta property="article:modified_time" content="2026-09-07T03:49:39.000Z">
+    <meta property="article:tag" content="Agent">
+    <meta property="article:tag" content="AI">
+    
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="RAG 不是把文档塞进向量库">
+    <meta name="twitter:description" content="链路有六段，向量化只是其中一段。大多数效果问题，出在前面两步。">
+    <meta name="twitter:url" content="/rag-is-not-just-vector-db/">
+    <meta name="twitter:image" content="https://static.ghost.org/v5.0.0/images/publication-cover.jpg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="李亚恒">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Agent, AI">
+    <meta name="twitter:site" content="@ghost">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="840">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "北恒的博客",
+        "url": "/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ.webp",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "李亚恒",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-2.webp",
+            "width": 360,
+            "height": 360
+        },
+        "url": "/author/li-yaheng/",
+        "sameAs": [
+            "https://github.com/beiheng127"
+        ]
+    },
+    "headline": "RAG 不是把文档塞进向量库",
+    "url": "/rag-is-not-just-vector-db/",
+    "datePublished": "2026-09-07T11:30:00.000Z",
+    "dateModified": "2026-09-07T03:49:39.000Z",
+    "keywords": "Agent, AI",
+    "description": "链路有六段，向量化只是其中一段。大多数效果问题，出在前面两步。",
+    "mainEntityOfPage": "/rag-is-not-just-vector-db/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 6.59">
+    <link rel="alternate" type="application/rss+xml" title="北恒的博客" href="/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.69/umd/portal.min.js" data-i18n="true" data-ghost="/" data-key="f24c2e077bd9fe405aadc922ab" data-api="/ghost/api/content/" data-locale="zh" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/sodo-search.min.js" data-key="f24c2e077bd9fe405aadc922ab" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/main.css" data-sodo-search="/" data-locale="zh" crossorigin="anonymous"></script>
+    
+    <link href="/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=ShRHxgy4po8zN-Wf"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=Jw0334E-A8vpuWdm">
+    <script defer src="/public/comment-counts.min.js?v=oFYkaGLdiMqB8VN9" data-ghost-comments-counts-api="/members/api/comments/counts/"></script>
+    <script defer src="/public/member-attribution.min.js?v=fGWxp7cZ6mmurhvN"></script><style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+</head>
+<body class="post-template tag-agent tag-ai is-head-middle-logo has-cover">
+<div class="oss-reading-progress" aria-hidden="true"><span class="oss-reading-progress-bar" id="oss-reading-progress-bar"></span></div>
+<div class="viewport">
+
+    <header id="gh-head" class="gh-head outer">
+        <div class="gh-head-inner inner">
+            <div class="gh-head-brand">
+                <a class="gh-head-logo" href="">
+                        <img src="/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ.webp" alt="北恒的博客">
+                </a>
+                <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                <button class="gh-burger" aria-label="Main Menu"></button>
+            </div>
+
+            <nav class="gh-head-menu">
+                <ul class="nav">
+    <li class="nav-home"><a href="/">Home</a></li>
+    <li class="nav-about"><a href="/about/">About</a></li>
+    <li class="nav-tags"><a href="/tags/">tags</a></li>
+</ul>
+
+            </nav>
+
+            <div class="gh-head-actions">
+                    <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                    <div class="gh-head-members">
+                                <a class="gh-head-link" href="#/portal/signin" data-portal="signin">登录</a>
+                                <a class="gh-head-button" href="#/portal/signup" data-portal="signup">订阅</a>
+                    </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="site-content">
+        
+
+
+
+<main id="site-main" class="site-main">
+<article class="article post tag-agent tag-ai no-image image-full">
+
+    <header class="article-header gh-canvas">
+
+        <div class="article-tag post-card-tags">
+                <span class="post-card-primary-tag">
+                    <a href="/tag/agent/">Agent</a>
+                </span>
+        </div>
+
+        <h1 class="article-title">RAG 不是把文档塞进向量库</h1>
+
+            <p class="article-excerpt">链路有六段，向量化只是其中一段。大多数效果问题，出在前面两步。</p>
+
+        <div class="article-byline">
+        <section class="article-byline-content">
+
+            <ul class="author-list instapaper_ignore">
+                <li class="author-list-item">
+                    <a href="/author/li-yaheng/" class="author-avatar" aria-label="Read more of 李亚恒">
+                        <img class="author-profile-image" src="/content/images/size/w100/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-2.webp" alt="李亚恒" loading="eager" />
+                    </a>
+                </li>
+            </ul>
+
+            <div class="article-byline-meta">
+                <h4 class="author-name"><a href="/author/li-yaheng/">李亚恒</a></h4>
+                <div class="byline-meta-content">
+                    <time class="byline-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                        <span class="byline-reading-time"><span class="bull">&bull;</span> 阅读时间 4 分钟</span>
+                </div>
+            </div>
+
+        </section>
+        <a href="#/share" class="gh-button gh-button-share">分享</a>
+        </div>
+
+        <div class="oss-post-meta">
+            <div class="oss-post-tags">
+                    <a href="/tag/agent/" class="oss-post-tag">Agent</a>
+                    <a href="/tag/ai/" class="oss-post-tag">AI</a>
+            </div>
+        </div>
+
+
+    </header>
+
+    <section class="gh-content gh-canvas">
+        <h2>一条被讲得太简单的链路</h2>
+<p>教程里的 RAG 通常长这样：文档切块 → 向量化 → 存向量库 → 提问时检索 → 拼进 prompt → 生成答案。</p>
+<p>六步，看起来很清楚。但真做下来你会发现，决定效果好坏的主要是前两步和后两步，中间的向量化反而是最不容易出问题的。</p>
+<h2>第一关：文档解析</h2>
+<p>如果你的语料是 Markdown，恭喜你，难度是入门级。如果是 PDF、Word、扫描件、带表格的财报，难度直接跳到地狱级。</p>
+<p>PDF 尤其麻烦。它本质上是排版指令，不是结构化文档。双栏论文直接提取会得到左右栏文字交错的结果；表格提取出来经常是一堆数字挤在一起，行列关系全丢。</p>
+<p>我的经验是：<strong>解析质量决定 RAG 的上限</strong>。解析出来的文本本身就是乱的，后面再怎么优化检索都救不回来。宁可在这个阶段多花时间，也不要急着往下走。</p>
+<h2>第二关：分块</h2>
+<p>按固定字符数切是最省事的，也是最粗糙的。它的典型失败场景：一个完整的步骤列表被切成两半，检索到后半段时，缺少前置条件，模型读到的信息是残缺的。</p>
+<p>改进方向有几个：</p>
+<ul>
+<li><strong>按结构切</strong>：标题、段落、列表项作为优先切分点</li>
+<li><strong>保留重叠</strong>：相邻块之间留 10%—20% 的重叠，缓解切断问题</li>
+<li><strong>带上下文的块</strong>：给每个块加一句它所属章节的标题作为前缀，这样即使单独被检索出来也不至于失去上下文</li>
+<li><strong>语义切分</strong>：按嵌入相似度找语义边界，成本更高但质量更好</li>
+</ul>
+<p>我目前用的是&quot;按结构切 + 章节标题前缀&quot;，性价比最高。</p>
+<h2>第三关：召回，不要只靠向量</h2>
+<p>这一段是很多人的盲区。纯向量检索有两个天然弱点：</p>
+<ul>
+<li><strong>专有名词</strong>：型号、函数名、人名这类词，语义相似度区分度很低</li>
+<li><strong>精确匹配</strong>：用户搜错误码、版本号，向量检索常常给出&quot;意思差不多&quot;但完全不对的结果</li>
+</ul>
+<p>所以实用方案几乎都是混合检索：向量一路 + 关键词（BM25 那类）一路，两路结果合并去重。这一步的收益，通常比换更好的 embedding 模型还大。</p>
+<h2>第四关：重排（Rerank）</h2>
+<p>混合检索拿回来的候选可能有几十条，直接全塞进 prompt 会稀释注意力，也会撑爆上下文。</p>
+<p>重排模型干的事是：对这几十条候选做一次精细打分，只留最相关的三五条。它比向量检索慢，但准得多，所以放在检索之后、生成之前，是小成本高收益的一环。</p>
+<p>顺带一个经验：<strong>不要把检索到的内容放在 prompt 的最前面或者最后面</strong>。中间位置的信息被模型忽略的概率更高，把关键片段放在开头或者结尾，效果会稳一些。</p>
+<h2>第五关：引用与溯源</h2>
+<p>每一段被使用的原文，都要记录它的来源文档、页码/段落、原文文本。前端渲染成可点击的角标。</p>
+<p>这件事有双重价值：一是建立用户信任，二是<strong>出问题时你能定位是哪一段喂错了</strong>。没有引用记录的 RAG，排查问题只能靠猜。</p>
+<h2>第六关：评估</h2>
+<p>最容易被跳过，也最不该跳过的环节。</p>
+<p>没有评估集的 RAG 优化是这样的：你改了分块策略，跑了几个自己熟悉的 query，感觉好了，上线。一周后有用户反馈答错了，你不知道是检索错了还是生成错了。</p>
+<p>最小可行的评估集长这样：</p>
+<ul>
+<li>30—50 条真实问题</li>
+<li>每条标注期望命中的文档片段</li>
+<li>三个指标：召回率（正确的片段有没有被检索到）、准确率（检索到的片段里正确的占比）、答案正确率</li>
+</ul>
+<p>前两个指标可以自动化计算，第三个前期靠人工看。数量不用多，30 条就足以看出改动是变好还是变坏。</p>
+<h2>一个反直觉的结论</h2>
+<p>大多数&quot;RAG 效果不好&quot;的案例，问题不在模型，而在数据——文档解析烂、分块切断语义、没有引用记录、没有评估集。</p>
+<p>换句话说，RAG 八成是数据工程，两成是模型工程。把它当模型问题来解决，方向从一开始就错了。</p>
+
+    </section>
+
+        <section class="article-comments gh-canvas">
+            
+        <script defer src="https://cdn.jsdelivr.net/ghost/comments-ui@~1.6/umd/comments-ui.min.js" data-locale="zh" data-ghost-comments="/" data-api="/ghost/api/content/" data-admin="/ghost/" data-key="f24c2e077bd9fe405aadc922ab" data-title="null" data-count="true" data-post-id="ca977ca19d60df22093437fd" data-color-scheme="auto" data-avatar-saturation="60" data-accent-color="#FF1A75" data-comments-enabled="all" data-publication="北恒的博客" crossorigin="anonymous"></script>
+    
+        </section>
+
+</article>
+</main>
+
+
+
+
+            <aside class="oss-related-wrap outer">
+                <div class="oss-related inner">
+                    <div class="oss-related-heading">
+                        <h2 class="oss-related-title">相关推荐</h2>
+                        <span class="oss-related-tag">#</span>
+                    </div>
+
+                        <div class="oss-related-grid">
+                                
+<article class="post-card post tag-agent tag-ai no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/agent-stack-2026/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">Agent</span>
+                </div>
+                <h2 class="post-card-title">
+                    2026 年的 Agent 技术栈，以及单智能体为什么还打得过多智能体
+                </h2>
+            </header>
+                <div class="post-card-excerpt">框架战争结束了，控制流就是代码。真正分层的是模型、工具、编排、沙箱、护栏这五层。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 4 分钟</span>
+                <script
+    data-ghost-comment-count="a0cba9db72f1fa7a69d2e724"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                                
+<article class="post-card post tag-agent tag-open-source no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/aether-desk-retro/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">Agent</span>
+                </div>
+                <h2 class="post-card-title">
+                    手搓一个知识工作台 Agent：aether-desk 复盘
+                </h2>
+            </header>
+                <div class="post-card-excerpt">会话持久化、真 Tool Calling、混合 RAG、引用角标、人在环、Generative UI——六个决策背后的取舍。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 5 分钟</span>
+                <script
+    data-ghost-comment-count="128cbe3a51a699512992f13f"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                                
+<article class="post-card post tag-agent tag-ai no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/ai-agent-fundamentals/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">Agent</span>
+                </div>
+                <h2 class="post-card-title">
+                    AI Agent 到底是个啥：从一次对话到一个能干活的东西
+                </h2>
+            </header>
+                <div class="post-card-excerpt">大模型是脑子，Agent 是给它接上手脚和工具箱。理解这一点，比记住十个框架名字有用。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 4 分钟</span>
+                <script
+    data-ghost-comment-count="926b5529fc3f6f8ded050eac"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                        </div>
+                </div>
+            </aside>
+
+
+
+    </div>
+
+    <footer class="site-footer outer">
+        <div class="inner">
+            <section class="copyright"><a href="">北恒的博客</a> &copy; 2026</section>
+            <div class="site-footer-center">
+                <div class="site-footer-social-links">
+                        <a href="https://x.com/ghost" target="_blank" rel="noopener" aria-label="X">
+<svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18.2439 2.25H21.5519L14.3249 10.51L22.8269 21.75H16.1699L10.9559 14.933L4.98991 21.75H1.67991L9.40991 12.915L1.25391 2.25H8.07991L12.7929 8.481L18.2439 2.25ZM17.0829 19.77H18.9159L7.08391 4.126H5.11691L17.0829 19.77Z" fill="currentColor"/>
+</svg>                        </a>
+                        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M23.9981 11.9991C23.9981 5.37216 18.626 0 11.9991 0C5.37216 0 0 5.37216 0 11.9991C0 17.9882 4.38789 22.9522 10.1242 23.8524V15.4676H7.07758V11.9991H10.1242V9.35553C10.1242 6.34826 11.9156 4.68714 14.6564 4.68714C15.9692 4.68714 17.3424 4.92149 17.3424 4.92149V7.87439H15.8294C14.3388 7.87439 13.8739 8.79933 13.8739 9.74824V11.9991H17.2018L16.6698 15.4676H13.8739V23.8524C19.6103 22.9522 23.9981 17.9882 23.9981 11.9991Z"/></svg>                        </a>
+                </div>
+                <nav class="site-footer-nav">
+                    <ul class="nav">
+    <li class="nav-sign-up"><a href="#/portal/">Sign up</a></li>
+</ul>
+
+                </nav>
+            </div>
+            <div class="gh-powered-by"><a href="https://ghost.org/" target="_blank" rel="noopener">Powered by Ghost</a> <span class="oss-theme-credit">· Theme: OSS Blog (fork of Casper)</span></div>
+        </div>
+    </footer>
+
+</div>
+
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/built/casper.js?v=P31E7MBl4qW96wZr" defer></script>
+
+<script src="/assets/js/oss-enhance.js?v=0O2UTWVb-pLD67eo" defer></script>
+
+<script>
+(function () {
+    var bar = document.getElementById('oss-reading-progress-bar');
+    if (!bar) { return; }
+    function update() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - window.innerHeight;
+        var pct = height > 0 ? Math.min(100, Math.max(0, (scrollTop / height) * 100)) : 0;
+        /* scaleX from the left keeps the rainbow gradient undistorted as it grows */
+        bar.style.transform = 'scaleX(' + (pct / 100) + ')';
+    }
+    window.addEventListener('scroll', update, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+})();
+</script>
+
+
+
+</body>
+</html>

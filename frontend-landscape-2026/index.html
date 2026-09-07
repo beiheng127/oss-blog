@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh" class="no-infinite-scroll">
+<head>
+<base href="/oss-blog/">
+
+    <title>2026 前端这一年：React 19、Vue Vapor 和 Rust 工具链</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" as="style" href="/assets/built/screen.css?v=9n2338ulqJzWtISb" />
+    <link rel="preload" as="script" href="/assets/built/casper.js?v=P31E7MBl4qW96wZr" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css?v=9n2338ulqJzWtISb" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/oss-blog.css?v=Z1Ts3hRwZy4fmbtC" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/oss-design.css?v=Z11sArkJGs8FGXO2" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/oss-enhance.css?v=_4MbR_DX8AdIrnWQ" />
+
+    <meta name="description" content="框架之争已经不重要了。真正变化的是：性能交给编译器，渲染默认服务端，构建工具换了语言。">
+    <link rel="icon" href="/content/images/size/w256h256/format/png/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-1.webp" type="image/png">
+    <link rel="canonical" href="/frontend-landscape-2026/">
+    <link rel="alternate" type="text/markdown" href="/frontend-landscape-2026.md">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+    <meta property="og:site_name" content="北恒的博客">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="2026 前端这一年：React 19、Vue Vapor 和 Rust 工具链">
+    <meta property="og:description" content="框架之争已经不重要了。真正变化的是：性能交给编译器，渲染默认服务端，构建工具换了语言。">
+    <meta property="og:url" content="/frontend-landscape-2026/">
+    <meta property="og:image" content="https://static.ghost.org/v5.0.0/images/publication-cover.jpg">
+    <meta property="article:published_time" content="2026-09-07T10:30:00.000Z">
+    <meta property="article:modified_time" content="2026-09-07T03:49:39.000Z">
+    <meta property="article:tag" content="前端">
+    <meta property="article:tag" content="技术">
+    
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="2026 前端这一年：React 19、Vue Vapor 和 Rust 工具链">
+    <meta name="twitter:description" content="框架之争已经不重要了。真正变化的是：性能交给编译器，渲染默认服务端，构建工具换了语言。">
+    <meta name="twitter:url" content="/frontend-landscape-2026/">
+    <meta name="twitter:image" content="https://static.ghost.org/v5.0.0/images/publication-cover.jpg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="李亚恒">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="前端, 技术">
+    <meta name="twitter:site" content="@ghost">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="840">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "北恒的博客",
+        "url": "/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ.webp",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "李亚恒",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-2.webp",
+            "width": 360,
+            "height": 360
+        },
+        "url": "/author/li-yaheng/",
+        "sameAs": [
+            "https://github.com/beiheng127"
+        ]
+    },
+    "headline": "2026 前端这一年：React 19、Vue Vapor 和 Rust 工具链",
+    "url": "/frontend-landscape-2026/",
+    "datePublished": "2026-09-07T10:30:00.000Z",
+    "dateModified": "2026-09-07T03:49:39.000Z",
+    "keywords": "前端, 技术",
+    "description": "框架之争已经不重要了。真正变化的是：性能交给编译器，渲染默认服务端，构建工具换了语言。",
+    "mainEntityOfPage": "/frontend-landscape-2026/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 6.59">
+    <link rel="alternate" type="application/rss+xml" title="北恒的博客" href="/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.69/umd/portal.min.js" data-i18n="true" data-ghost="/" data-key="f24c2e077bd9fe405aadc922ab" data-api="/ghost/api/content/" data-locale="zh" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/sodo-search.min.js" data-key="f24c2e077bd9fe405aadc922ab" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/main.css" data-sodo-search="/" data-locale="zh" crossorigin="anonymous"></script>
+    
+    <link href="/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=ShRHxgy4po8zN-Wf"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=Jw0334E-A8vpuWdm">
+    <script defer src="/public/comment-counts.min.js?v=oFYkaGLdiMqB8VN9" data-ghost-comments-counts-api="/members/api/comments/counts/"></script>
+    <script defer src="/public/member-attribution.min.js?v=fGWxp7cZ6mmurhvN"></script><style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+</head>
+<body class="post-template tag-frontend tag-tech is-head-middle-logo has-cover">
+<div class="oss-reading-progress" aria-hidden="true"><span class="oss-reading-progress-bar" id="oss-reading-progress-bar"></span></div>
+<div class="viewport">
+
+    <header id="gh-head" class="gh-head outer">
+        <div class="gh-head-inner inner">
+            <div class="gh-head-brand">
+                <a class="gh-head-logo" href="">
+                        <img src="/content/images/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ.webp" alt="北恒的博客">
+                </a>
+                <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                <button class="gh-burger" aria-label="Main Menu"></button>
+            </div>
+
+            <nav class="gh-head-menu">
+                <ul class="nav">
+    <li class="nav-home"><a href="/">Home</a></li>
+    <li class="nav-about"><a href="/about/">About</a></li>
+    <li class="nav-tags"><a href="/tags/">tags</a></li>
+</ul>
+
+            </nav>
+
+            <div class="gh-head-actions">
+                    <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                    <div class="gh-head-members">
+                                <a class="gh-head-link" href="#/portal/signin" data-portal="signin">登录</a>
+                                <a class="gh-head-button" href="#/portal/signup" data-portal="signup">订阅</a>
+                    </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="site-content">
+        
+
+
+
+<main id="site-main" class="site-main">
+<article class="article post tag-frontend tag-tech no-image image-full">
+
+    <header class="article-header gh-canvas">
+
+        <div class="article-tag post-card-tags">
+                <span class="post-card-primary-tag">
+                    <a href="/tag/frontend/">前端</a>
+                </span>
+        </div>
+
+        <h1 class="article-title">2026 前端这一年：React 19、Vue Vapor 和 Rust 工具链</h1>
+
+            <p class="article-excerpt">框架之争已经不重要了。真正变化的是：性能交给编译器，渲染默认服务端，构建工具换了语言。</p>
+
+        <div class="article-byline">
+        <section class="article-byline-content">
+
+            <ul class="author-list instapaper_ignore">
+                <li class="author-list-item">
+                    <a href="/author/li-yaheng/" class="author-avatar" aria-label="Read more of 李亚恒">
+                        <img class="author-profile-image" src="/content/images/size/w100/2026/09/occG4CIAfACfZF0EL6BH4EAIGeDYLCAytIAgeQ-2.webp" alt="李亚恒" loading="eager" />
+                    </a>
+                </li>
+            </ul>
+
+            <div class="article-byline-meta">
+                <h4 class="author-name"><a href="/author/li-yaheng/">李亚恒</a></h4>
+                <div class="byline-meta-content">
+                    <time class="byline-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                        <span class="byline-reading-time"><span class="bull">&bull;</span> 阅读时间 4 分钟</span>
+                </div>
+            </div>
+
+        </section>
+        <a href="#/share" class="gh-button gh-button-share">分享</a>
+        </div>
+
+        <div class="oss-post-meta">
+            <div class="oss-post-tags">
+                    <a href="/tag/frontend/" class="oss-post-tag">前端</a>
+                    <a href="/tag/tech/" class="oss-post-tag">技术</a>
+            </div>
+        </div>
+
+
+    </header>
+
+    <section class="gh-content gh-canvas">
+        <h2>框架还在吵，但战场已经挪走了</h2>
+<p>每隔一段时间就有人问&quot;学 React 还是学 Vue&quot;。2026 年这个问题已经不那么重要了，因为两个框架在往同一个方向收敛：<strong>把能提前算的都提前算，把渲染往服务端推</strong>。</p>
+<p>React 19 这边，Server Components 从&quot;可选优化&quot;变成了默认姿势，React Compiler 把 <code>useMemo</code> / <code>useCallback</code> 这类手动优化接管了。以前为了性能写的一堆反直觉代码，现在编译器帮你做。</p>
+<p>Vue 的动作更激进。3.5 重构了响应式系统，内存占用降了一大截，大数组操作性能提升明显；3.6 的 Vapor Mode 直接把虚拟 DOM 编译掉，生成原生 DOM 操作代码。这意味着 Vue 的性能逼近手写原生 JS，但你依旧用 Vue 的语法写。</p>
+<p>所以现在真正需要花时间理解的不是&quot;这个 API 怎么用&quot;，而是：<strong>哪些代码跑在服务端，哪些跑在客户端，中间那条边界上的数据怎么传</strong>。hydration、streaming、partial prerender 这些概念比框架 API 更值钱，因为它们不会随版本过时。</p>
+<h2>Rust 把构建工具链重写了一遍</h2>
+<p>这两年工程化领域最实在的变化，是构建工具集体换语言。</p>
+<ul>
+<li>Vite 6 稳定下来，成了新项目默认</li>
+<li>Rspack（Rust 版 Webpack）在存量项目的迁移上很能打</li>
+<li>Biome 用 Rust 重写了 ESLint + Prettier 的活，全项目检查从一分钟压到几秒</li>
+<li>Turbopack 跟着 Next.js 一起稳定</li>
+</ul>
+<p>体感差距很大：以前一个中等项目冷启动构建两三分钟，现在十几秒。这件事的意义不只是&quot;等得少了&quot;，而是<strong>AI 生成代码之后的迭代循环被压缩了</strong>——你让 AI 改五个文件，五秒后就能看到结果，这个反馈速度决定了你敢不敢大胆地让 AI 动手。</p>
+<h2>端侧 AI 是前端手里的一张新牌</h2>
+<p>WebGPU 的浏览器覆盖率已经相当高了，加上 Transformers.js、WebLLM 这些框架，你现在可以在浏览器里直接跑模型。</p>
+<p>我在本地试过的场景：上传一张图，浏览器本地识别内容，不传服务器。代码量不到两百行。这件事的意义在于，前端第一次有了&quot;不需要后端就能提供 AI 能力&quot;的可能——离线可用、隐私天然合规、响应即时。</p>
+<p>当然边界也很清楚：浏览器里能跑的只有量化后的小模型，复杂推理还是得走服务端。但&quot;小模型做预处理 + 大模型做深推理&quot;这个组合，给前端留出了很大的设计空间。</p>
+<h2>TypeScript 已经不是加分项</h2>
+<p>2026 年再讨论&quot;要不要上 TS&quot;有点过时了。中高级岗位基本默认要求，新项目默认 TS-first。</p>
+<p>原因不只是类型安全。在 AI 大量生成代码的背景下，<strong>类型定义成了人和 AI 之间的契约</strong>——你把类型写清楚，AI 生成的代码准确率会明显提升；反过来，一个 <code>any</code> 满天飞的项目，AI 只会往里加更多 <code>any</code>。</p>
+<h2>我的判断</h2>
+<p>&quot;前端已死&quot;这个说法每隔两年就冒出来一次。这次不太一样的地方在于，被挤压的确实是&quot;只写页面&quot;的那部分工作。</p>
+<p>一个更准确的描述是：岗位在往两头走。中间的 CRUD 业务前端在收缩，而复杂交互 / 性能优化 / 工程化 / 设计系统这些方向在涨。同时&quot;前端 + Node 中间层 + AI 应用&quot;的复合型岗位在变多。</p>
+<p>所以我的学习顺序是：先把 TS 和框架原理打扎实，然后补 Node 和 AI 应用开发，最后才是追新框架的版本号。追版本号永远追不完，底层能力能用十年。</p>
+
+    </section>
+
+        <section class="article-comments gh-canvas">
+            
+        <script defer src="https://cdn.jsdelivr.net/ghost/comments-ui@~1.6/umd/comments-ui.min.js" data-locale="zh" data-ghost-comments="/" data-api="/ghost/api/content/" data-admin="/ghost/" data-key="f24c2e077bd9fe405aadc922ab" data-title="null" data-count="true" data-post-id="837e3686be934820d659ca7f" data-color-scheme="auto" data-avatar-saturation="60" data-accent-color="#FF1A75" data-comments-enabled="all" data-publication="北恒的博客" crossorigin="anonymous"></script>
+    
+        </section>
+
+</article>
+</main>
+
+
+
+
+            <aside class="oss-related-wrap outer">
+                <div class="oss-related inner">
+                    <div class="oss-related-heading">
+                        <h2 class="oss-related-title">相关推荐</h2>
+                        <span class="oss-related-tag">#</span>
+                    </div>
+
+                        <div class="oss-related-grid">
+                                
+<article class="post-card post tag-frontend tag-tech no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/nextjs-three-projects-retro/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">前端</span>
+                </div>
+                <h2 class="post-card-title">
+                    写了三个 Next.js 项目之后，我改掉的几个习惯
+                </h2>
+            </header>
+                <div class="post-card-excerpt">chatbot、AITalk、chatapp——三个项目踩出来的坑，比任何教程都记得牢。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 3 分钟</span>
+                <script
+    data-ghost-comment-count="3b69e69ceb940a47127d2e01"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                                
+<article class="post-card post tag-frontend tag-ai no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/on-device-ai-webgpu/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">前端</span>
+                </div>
+                <h2 class="post-card-title">
+                    端侧 AI：前端手里的一张新牌
+                </h2>
+            </header>
+                <div class="post-card-excerpt">浏览器里能跑模型之后，前端第一次有了&quot;不依赖后端也能提供 AI 能力&quot;的可能。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 3 分钟</span>
+                <script
+    data-ghost-comment-count="c457218f3a429a44acb54354"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                                
+<article class="post-card post tag-frontend tag-agent no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/streaming-ui-sse-practice/">
+            <header class="post-card-header">
+                <div class="post-card-tags">
+                        <span class="post-card-primary-tag">前端</span>
+                </div>
+                <h2 class="post-card-title">
+                    做 AI 应用绕不开的一关：流式渲染怎么落地
+                </h2>
+            </header>
+                <div class="post-card-excerpt">打字机效果只是起点。真正的难点在断线、降级、Markdown 增量渲染和长会话的性能。</div>
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="2026-09-07">07 9月 2026</time>
+                <span class="post-card-meta-author">李亚恒</span>
+                <span class="post-card-meta-length oss-reading-badge">阅读时间 4 分钟</span>
+                <script
+    data-ghost-comment-count="a39204569bc430ba08b463dd"
+    data-ghost-comment-count-empty=""
+    data-ghost-comment-count-singular="comment"
+    data-ghost-comment-count-plural="comments"
+    data-ghost-comment-count-tag="span"
+    data-ghost-comment-count-class-name=""
+    data-ghost-comment-count-autowrap="true"
+>
+</script>
+        </footer>
+
+    </div>
+
+</article>
+                        </div>
+                </div>
+            </aside>
+
+
+
+    </div>
+
+    <footer class="site-footer outer">
+        <div class="inner">
+            <section class="copyright"><a href="">北恒的博客</a> &copy; 2026</section>
+            <div class="site-footer-center">
+                <div class="site-footer-social-links">
+                        <a href="https://x.com/ghost" target="_blank" rel="noopener" aria-label="X">
+<svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18.2439 2.25H21.5519L14.3249 10.51L22.8269 21.75H16.1699L10.9559 14.933L4.98991 21.75H1.67991L9.40991 12.915L1.25391 2.25H8.07991L12.7929 8.481L18.2439 2.25ZM17.0829 19.77H18.9159L7.08391 4.126H5.11691L17.0829 19.77Z" fill="currentColor"/>
+</svg>                        </a>
+                        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M23.9981 11.9991C23.9981 5.37216 18.626 0 11.9991 0C5.37216 0 0 5.37216 0 11.9991C0 17.9882 4.38789 22.9522 10.1242 23.8524V15.4676H7.07758V11.9991H10.1242V9.35553C10.1242 6.34826 11.9156 4.68714 14.6564 4.68714C15.9692 4.68714 17.3424 4.92149 17.3424 4.92149V7.87439H15.8294C14.3388 7.87439 13.8739 8.79933 13.8739 9.74824V11.9991H17.2018L16.6698 15.4676H13.8739V23.8524C19.6103 22.9522 23.9981 17.9882 23.9981 11.9991Z"/></svg>                        </a>
+                </div>
+                <nav class="site-footer-nav">
+                    <ul class="nav">
+    <li class="nav-sign-up"><a href="#/portal/">Sign up</a></li>
+</ul>
+
+                </nav>
+            </div>
+            <div class="gh-powered-by"><a href="https://ghost.org/" target="_blank" rel="noopener">Powered by Ghost</a> <span class="oss-theme-credit">· Theme: OSS Blog (fork of Casper)</span></div>
+        </div>
+    </footer>
+
+</div>
+
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/built/casper.js?v=P31E7MBl4qW96wZr" defer></script>
+
+<script src="/assets/js/oss-enhance.js?v=0O2UTWVb-pLD67eo" defer></script>
+
+<script>
+(function () {
+    var bar = document.getElementById('oss-reading-progress-bar');
+    if (!bar) { return; }
+    function update() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - window.innerHeight;
+        var pct = height > 0 ? Math.min(100, Math.max(0, (scrollTop / height) * 100)) : 0;
+        /* scaleX from the left keeps the rainbow gradient undistorted as it grows */
+        bar.style.transform = 'scaleX(' + (pct / 100) + ')';
+    }
+    window.addEventListener('scroll', update, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+})();
+</script>
+
+
+
+</body>
+</html>
