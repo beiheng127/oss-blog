@@ -40,3 +40,6 @@ Thumbs.db
 # ---- Data export (contains member PII — do not commit raw exports) ----
 exports/
 *.ghost.json
+
+# generated static snapshot (GitHub Pages)
+/static-site/

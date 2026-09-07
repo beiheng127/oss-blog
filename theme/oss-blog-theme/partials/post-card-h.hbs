@@ -1,0 +1,64 @@
+{{!-- OSS Blog: horizontal post card — left image, right text.
+Used by index / tag / author list feeds via post-feed. The related-posts
+panel and 404 page keep using partials/post-card.hbs (vertical). --}}
+
+<article class="post-card oss-card-h {{post_class}}">
+
+    {{!-- Left media area (image, or a branded gradient placeholder when the
+         post has no feature_image) so every card keeps the same height. --}}
+    <a class="oss-card-h-media" href="{{url}}" aria-label="{{title}}">
+        {{#if feature_image}}
+            <img class="oss-card-h-img"
+                srcset="{{img_url feature_image size="s"}} 300w,
+                        {{img_url feature_image size="m"}} 600w,
+                        {{img_url feature_image size="l"}} 1000w"
+                sizes="(max-width: 1000px) 40vw, 400px"
+                src="{{img_url feature_image size="m"}}"
+                alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                loading="lazy"
+            />
+        {{else}}
+            <div class="oss-card-h-empty">
+                <span class="oss-card-h-empty-glyph" aria-hidden="true">✦</span>
+                {{#primary_tag}}
+                    <span class="oss-card-h-empty-tag">{{name}}</span>
+                {{/primary_tag}}
+            </div>
+        {{/if}}
+    </a>
+
+    {{!-- Right text area --}}
+    <div class="oss-card-h-body">
+
+        <div class="post-card-tags oss-card-h-tags">
+            {{#primary_tag}}
+                <span class="post-card-primary-tag">{{name}}</span>
+            {{/primary_tag}}
+            {{#if featured}}
+                <span class="post-card-featured">{{> "icons/fire"}} {{t "Featured"}}</span>
+            {{/if}}
+        </div>
+
+        <a class="post-card-content-link oss-card-h-link" href="{{url}}">
+            <h2 class="post-card-title oss-card-h-title">{{title}}</h2>
+            {{#if excerpt}}
+                <p class="post-card-excerpt oss-card-h-excerpt">{{excerpt}}</p>
+            {{/if}}
+        </a>
+
+        <footer class="post-card-meta">
+            <time class="post-card-meta-date" datetime="{{date format="YYYY-MM-DD"}}">{{date format="DD MMM YYYY"}}</time>
+            {{#primary_author}}
+                <span class="post-card-meta-author">{{name}}</span>
+            {{/primary_author}}
+            {{#if reading_time}}
+                <span class="post-card-meta-length oss-reading-badge">{{reading_time minute=(t "1 min read") minutes=(t "% min read")}}</span>
+            {{/if}}
+            {{#if @site.comments_enabled}}
+                {{comment_count}}
+            {{/if}}
+        </footer>
+
+    </div>
+
+</article>

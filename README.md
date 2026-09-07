@@ -325,6 +325,19 @@ node runtime/seed-posts.js --dry     # 只转换不写库，预览
 
 改视觉只需改这一个文件，刷新就能看（Ghost 会缓存一次，但主题 CSS 改了浏览器要硬刷新 `Ctrl+Shift+R`）。
 
+### 3.15 横向卡片布局（`partials/post-card-h.hbs` + `oss-design.css`）★改版
+
+问题：有的文章有封面图、有的没有，Casper 默认纵向卡片会让没图的卡片从标题开始，网格里上下不对齐。
+
+处理：统一改成**左图右文横卡**——
+
+1. 新建 `partials/post-card-h.hbs`：卡片内部 `flex-direction:row`，**左侧 42%** 固定「图区」——有 `feature_image` 就 `object-fit:cover` 铺满；**没有图就用分类渐变占位**（✦ + 标签名），这样每张卡片左区都有内容、高度一致。
+2. 首页 / 标签页 / 作者页的 `post-feed` 改用 `post-card-h`（`partials/post-card.hbs` 保留给**相关推荐**和 404，垂直卡不受影响）。
+3. `oss-design.css` 追加横卡样式：`.post-feed` 从 6 列网格改为 **2 列**；卡片圆角 20px、hover 上浮、图片缩放；移动端保持左图右文（缩小图区）。
+4. 渐变占位按标签分色调（独特性）：`tag-agent` 蓝紫、`tag-ai` 蓝、`tag-frontend` 粉紫、`tag-life` 青绿、`tag-tech` 红橙、`tag-news` 琥珀玫红等——每张无图卡都不同颜色，避免一整排紫色单调。
+
+> 横卡只在列表 feed 生效；文章详情页顶部大图、相关推荐面板（720px 网格）逻辑不变。
+
 ### 改动文件清单
 
 | 文件 | 改动类型 |
@@ -333,13 +346,15 @@ node runtime/seed-posts.js --dry     # 只转换不写库，预览
 | `post.hbs` | 修改：标签 chips、相关推荐面板 |
 | `author.hbs` | **改版**：作者主页博主风（封面+头像+统计+社交+订阅） |
 | `page-tags.hbs` | **新增**：`/tags/` 标签总览页模板 |
-| `partials/post-card.hbs` | 修改：作者名、阅读时长徽章 |
+| `partials/post-card.hbs` | 修改：作者名、阅读时长徽章（仍用于相关推荐 / 404 垂直卡） |
+| `partials/post-card-h.hbs` | **新增**：横向卡片（左图右文，无图用分类渐变占位），首页/标签/作者列表用 |
+| `index.hbs` `/` `tag.hbs` `/` `author.hbs` | 修改：`post-feed` 引用由 `post-card` 换成 `post-card-h` |
 | `partials/pagination.hbs` | **新增**：数字页码导航（覆盖内置分页） |
 | `assets/css/oss-blog.css` | 修改：进度条彩虹/徽章/chips/推荐面板样式 + 标签页样式 + 作者页样式 |
 | `assets/built/oss-blog.css` | 修改：同步上述样式（页面实际加载这个） |
 | `assets/css/oss-enhance.css` | **新增**：复制按钮、返回顶部样式 |
 | `assets/js/oss-enhance.js` | **新增**：复制按钮、返回顶部逻辑 |
-| `assets/css/oss-design.css` | **新增**：自定义设计样式（粉紫渐变 + 分页胶囊） |
+| `assets/css/oss-design.css` | **新增**：自定义设计样式（粉紫渐变 + 分页胶囊 + 横卡布局 + 分类渐变占位） |
 | `locales/zh.json`、`locales-local/zh.json` | 修改：中文翻译（含标签页 + 作者页文案） |
 | `package.json` | 修改：`posts_per_page: 6` + `show_related_posts` 自定义设置 |
 | `start-ghost.bat` / `stop-ghost.bat` | 修改：smtp-catch / extract-watcher 已无用，因走真实 QQ SMTP |
@@ -659,3 +674,98 @@ npm run test   # gscan 检查
 ---
 
 > **更新节奏**：上述 TODO 每完成一项，把"已完成"段对应项的 strikethrough 加上日期，更新"完成日期"，并视情况在 CHANGELOG.md 留一行。
+
+---
+
+## 十一、部署上线
+
+本博客采用 **"本地完整版 Ghost（写作/管理）+ 对外静态展示版"** 的架构。本地版在 `localhost:2368`（会员登录、评论、管理后台、邮件订阅全部可用，适合持续写作）；对外展示版是镜像出来的静态站，零成本、秒开、免备案，适合给 HR/读者一个公网链接。
+
+### 方式一：静态化（零成本，推荐先做，今天就能有链接）
+
+产物已生成在 `static-site/`（40 个页面 + 43 个资源文件，约 6.3MB），由 `runtime/build-static.js` 生成：
+
+```
+node runtime/build-static.js /oss-blog/   # 重新抓取最新内容到 static-site/
+```
+
+**工作原理**：爬取正在运行的 Ghost 站点（localhost:2368）所有页面（首页/分页/文章/标签/About），注入 `<base href="/oss-blog/">` 让根相对链接在部署前缀下正确解析，并下载全部 css/js/图片（含各响应式尺寸变体）。
+
+**部署到 GitHub Pages**（项目页 `https://<user>.github.io/oss-blog/`）：
+
+```bash
+# 1) 把 static-site 挂到 gh-pages 分支
+git checkout --orphan gh-pages
+git rm -rf .
+cp -r static-site/* .
+git add .
+git commit -m "chore: static snapshot for GitHub Pages"
+git push origin gh-pages
+git checkout main                      # 回到主分支
+
+# 2) 去 https://github.com/<user>/oss-blog → Settings → Pages
+#    选 "Deploy from a branch" + gh-pages + /(root) → Save
+#    稍候即可访问 https://<user>.github.io/oss-blog/
+```
+
+> 注意：`static-site/` 及 `runtime/` 已在 `.gitignore`，不会进 main（`runtime/` 含数据库 + SMTP 授权码，必须保密）。静态站无会员/评论交互（只做内容展示）；要恢复完整互动请用方式二。
+
+### 方式二：VPS 自托管（功能完整，保留会员/评论/邮件，需小预算）
+
+用 Docker 一键起 `ghost + mysql + caddy`，海外节点免备案：
+
+```yaml
+# docker-compose.yml
+services:
+  ghost:
+    image: ghost:latest
+    restart: unless-stopped
+    ports: ["2368:2368"]
+    volumes: ["ghost_content:/var/lib/ghost/content"]
+    environment:
+      url: "https://blog.你的域名.com"
+      database__client: mysql
+      database__connection__host: mysql
+      database__connection__user: ghost
+      database__connection__password: "${MYSQL_PASSWORD}"
+      database__connection__database: ghost
+      mail__transport: SMTP
+      mail__options__host: smtp.qq.com
+      mail__options__port: "465"
+      mail__options__secure: "true"
+      mail__options__auth__user: "934705339@qq.com"
+      mail__options__auth__pass: "${QQ_SMTP_CODE}"
+      mail__from: "Ghost Blog <934705339@qq.com>"
+    depends_on: [mysql]
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    volumes: ["mysql_data:/var/lib/mysql"]
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ghost
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    volumes: ["./Caddyfile:/etc/caddy/Caddyfile"]
+volumes: { ghost_content: {}, mysql_data: {} }
+```
+
+```text
+# Caddyfile  (自动 HTTPS)
+blog.你的域名.com {
+    reverse_proxy ghost:2368
+}
+```
+
+**必须做的安全项**（2026 年 Ghost 曾出过 CVE，有波及数百站的 ClickFix 攻击）：
+1. 定期 `ghost update` / `docker pull ghost:latest` 打补丁；
+2. 全程 HTTPS（Caddy 自动证书），Caddyfile 不要裸 http；
+3. 后台 `Settings → Security` 尽量关掉不必要的公开注册，管理后台加强密码；
+4. 邮件用 QQ SMTP（465 SSL），授权码放环境变量 `QQ_SMTP_CODE`，**千万别写进仓库**；
+5. 定期备份 `content/` + `mysql_data/`。
+
+**选型建议**：求职作品集 → 先跑方式一（今天就有链接）；想要真正可互动、长期运营 → 方式二（月几十元 + 一个域名）。两者可并存：本地 Ghost 照常写，静态站随时重新抓取更新。
