@@ -41,7 +41,18 @@
 /* centered editorial hero text */
 .site-header-content {
     text-align: center;
-    padding: 8vmin 4vmin 9vmin;
+    /* 顶部留出 absolute 导航栏(88px) + margin，让标题/封面图不被导航栏遮挡 */
+    padding: calc(88px + 6vmin) 4vmin 9vmin;
+}
+
+/* 封面图从导航栏下方开始，避免与导航栏重叠；导航栏与封面图之间留间隙 */
+.has-cover .site-header-content {
+    min-height: 520px;
+}
+.site-header-cover {
+    top: calc(88px + 3vmin);
+    bottom: 0;
+    height: auto;
 }
 
 .oss-hero-title {
@@ -150,11 +161,11 @@
 /* ==========================================================================
    Editorial feed — index / tag / author
    Compact card system modelled on the author's own blog (boke): small white
-   cards, a fixed image height, tight type. One card per page is randomly
-   promoted to the horizontal "lead story" by oss-home.js (.oss-card-v.is-featured).
+   cards, a fixed image height, tight type. Every card is the same compact
+   vertical tile; no "featured/lead story" variation (kept it simple).
    ========================================================================== */
 
-/* grid: featured spans the whole row, the rest share a 3-col compact grid.
+/* grid: all cards share a 3-col compact grid.
    Must override Casper's `.post-card { grid-column: span 2 }` or the cards
    inherit a 2-col span and each collapses to a full-width tile. */
 .post-feed.oss-feed {
@@ -318,53 +329,6 @@
     font-weight: 500;
 }
 
-/* ---- Featured / lead story (randomly promoted): image left, text right --- */
-/* Higher specificity than `.post-feed.oss-feed .post-card { span 1 }` so the
-   promoted card actually spans the full row instead of sharing it. */
-.post-feed.oss-feed .oss-card-v.is-featured {
-    grid-column: 1 / -1 !important;
-    grid-row: auto !important;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    align-items: stretch;
-}
-.post-feed.oss-feed .oss-card-v.is-featured .oss-card-v-media {
-    height: auto;
-    min-height: 250px;
-    background: var(--oss-grad-hero);
-}
-.post-feed.oss-feed .oss-card-v.is-featured .oss-card-v-body {
-    justify-content: center;
-    padding: 28px 32px;
-}
-.post-feed.oss-feed .oss-card-v.is-featured .oss-card-v-title {
-    -webkit-line-clamp: 2;
-    font-size: 1.9rem;
-}
-.post-feed.oss-feed .oss-card-v.is-featured .oss-card-v-excerpt {
-    -webkit-line-clamp: 4;
-    font-size: 1rem;
-    max-width: 58ch;
-}
-.post-feed.oss-feed .oss-card-v.is-featured .oss-card-v-meta {
-    margin-top: 14px;
-}
-@media (max-width: 679px) {
-    .post-feed.oss-feed .oss-card-v.is-featured {
-        grid-template-columns: 1fr;   /* stack image on top */
-    }
-    .post-feed.oss-feed .oss-card-v.is-featured .oss-card-v-media {
-        min-height: 0;
-        height: 200px;
-    }
-    .post-feed.oss-feed .oss-card-v.is-featured .oss-card-v-title {
-        font-size: 1.6rem;
-    }
-    .post-feed.oss-feed .oss-card-v.is-featured .oss-card-v-excerpt {
-        -webkit-line-clamp: 3;
-    }
-}
-
 /* ---- Feed responsive ---------------------------------------------------- */
 @media (max-width: 991px) {
     .post-feed.oss-feed {
@@ -378,19 +342,6 @@
     }
     .oss-card-v-media {
         height: 200px;
-    }
-    .oss-card-v.is-featured {
-        grid-template-columns: 1fr;   /* stack image on top */
-    }
-    .oss-card-v.is-featured .oss-card-v-media {
-        min-height: 0;
-        height: 200px;
-    }
-    .oss-card-v.is-featured .oss-card-v-title {
-        font-size: 1.6rem;
-    }
-    .oss-card-v.is-featured .oss-card-v-excerpt {
-        -webkit-line-clamp: 3;
     }
 }
 

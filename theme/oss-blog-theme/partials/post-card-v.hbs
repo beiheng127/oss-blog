@@ -1,9 +1,6 @@
-{{!-- OSS Blog: unified post card.
-Rendered for EVERY post on index/tag/author feeds. By default it's a COMPACT
-vertical card (image on top, text below) modelled on the author's own blog (boke).
-After load, oss-home.js randomly promotes ONE card per page to `.is-featured`,
-which flips it to a horizontal editorial card (image left, text right) via CSS —
-so no two refreshes look identical and the page isn't dominated by a huge first block.
+{{!-- OSS Blog: unified compact post card.
+Rendered for EVERY post on index/tag/author feeds — a small vertical card
+(image on top, text below) modelled on the author's own blog (boke).
 
 The media block carries `tag-<slug>` so the placeholder gradient can vary by tag
 (see oss-design.css), avoiding a wall of identical gradient tiles. --}}
@@ -17,10 +14,11 @@ The media block carries `tag-<slug>` so the placeholder gradient can vary by tag
                         {{img_url feature_image size="m"}} 600w,
                         {{img_url feature_image size="l"}} 1000w,
                         {{img_url feature_image size="xl"}} 2000w"
-                sizes="(max-width: 1000px) 50vw, 540px"
-                src="{{img_url feature_image size="m"}}"
+                sizes="(max-width: 991px) 45vw, (max-width: 1200px) 32vw, 500px"
+                src="{{img_url feature_image size="l"}}"
                 alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
                 loading="lazy"
+                decoding="async"
             />
             {{#primary_tag}}
                 <span class="oss-card-v-tag">{{name}}</span>
